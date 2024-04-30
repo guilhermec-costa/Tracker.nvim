@@ -5,8 +5,8 @@ local event_type = types.event
 events.Event_Generator = function(generator_config)
     return {
         config = generator_config,
-        ---@param opts event 
-        generate_event = function(opts)
+        --[[ ---@param opts event  ]]
+        generate_event = function(self, opts)
             vim.api.nvim_create_autocmd(opts.type, {
                 pattern = opts.pattern,
                 group = opts.group,
