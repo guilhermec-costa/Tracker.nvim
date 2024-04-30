@@ -7,9 +7,10 @@ types.tracker_defaults = {
     start_time = nil
 }
 
----@class event_generator
-types.event_generator = {
-    name = nil,
+---@class event
+types.event = {
+    desc = nil,
+    type = nil,
     group = nil,
     pattern = nil,
     handler = nil

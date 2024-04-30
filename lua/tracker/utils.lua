@@ -6,7 +6,7 @@ local random = math.random
 
 local tracker_defaults = types.tracker_defaults
 ---@return tracker_defaults
-utils.get_tracker_default_values = function()
+utils.generate_tracker_default_values = function()
     local tracker_start_timestamp = os.time()
     local session_id = utils.generate_session_id();
     return {
