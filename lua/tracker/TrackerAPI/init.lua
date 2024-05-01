@@ -30,6 +30,26 @@ function Tracker:__generate_tracker_default_values()
     }
 end
 
+function Tracker:get_active_events()
+    local active_events = {}
+    for event_name, event_metadata in pairs(self.events) do
+        if event_metadata.status == 1 then
+            table.insert(active_events, event_metadata)
+        end
+    end
+    return active_events
+end
+
+function Tracker:get_inactive_events()
+    local inactive_events = {}
+    for event_name, event_metadata in pairs(self.events) do
+        if event_metadata.status == 0 then
+            table.insert(inactive_events, event_metadata)
+        end
+    end
+    return inactive_events
+end
+
 function Tracker:start_timer()
     self.timer_start_time = os.time()
     if self.is_running == false then
