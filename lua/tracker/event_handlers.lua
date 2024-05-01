@@ -3,7 +3,7 @@
 local event_handler = {}
 
 event_handler.handle_buf_enter = function()
-    --[[ print("Entered the buffer") ]]
+    print("Entered the buffer")
 end
 
 

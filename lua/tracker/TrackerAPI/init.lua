@@ -2,19 +2,20 @@ local utils = require "tracker.utils"
 local events_configs = require "tracker.default_events_config"
 ---@class Tracker
 ---@field session_id string
----@field tracker_start_time number
----@field default_events table<string, table>
 local Tracker = {}
+Tracker.__index = Tracker
 
-function Tracker.new_tracker()
-    local defaults = Tracker:__generate_tracker_default_values()
-    local self = setmetatable({
-        session_id = defaults.session_id,
-        tracker_start_time = defaults.tracker_start_time,
-        default_events = events_configs
-    }, Tracker)
-
+function Tracker.new()
+    local self = setmetatable({}, Tracker)
+    self:initialize()
     return self
+end
+
+function Tracker:initialize()
+    local defaults = self:__generate_tracker_default_values()
+    self.session_id = defaults.session_id
+    self.tracker_start_time = defaults.tracker_start_time
+    self.events = events_configs
 end
 
 ---@return table<string, string>
@@ -27,7 +28,8 @@ function Tracker:__generate_tracker_default_values()
     }
 end
 
-function Tracker:setup(opts)
+function Tracker:get_active_events()
+    P(self)
 end
 
 return Tracker
