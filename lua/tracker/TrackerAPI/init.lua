@@ -5,17 +5,18 @@ local events_configs = require "tracker.default_events_config"
 local Tracker = {}
 Tracker.__index = Tracker
 
-function Tracker.new()
+function Tracker.new(opts)
     local self = setmetatable({}, Tracker)
-    self:initialize()
+    self:initialize(opts)
     return self
 end
 
-function Tracker:initialize()
+function Tracker:initialize(opts)
     local defaults = self:__generate_tracker_default_values()
     self.session_id = defaults.session_id
     self.tracker_start_time = defaults.tracker_start_time
     self.events = events_configs
+    self.event_debounce_time = opts.event_debounce_time
 end
 
 ---@return table<string, string>
@@ -26,10 +27,6 @@ function Tracker:__generate_tracker_default_values()
         tracker_start_time = tracker_start_timestamp,
         session_id = session_id
     }
-end
-
-function Tracker:get_active_events()
-    P(self)
 end
 
 return Tracker

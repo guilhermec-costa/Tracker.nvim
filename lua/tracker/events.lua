@@ -11,18 +11,18 @@ function Event_Manager:activate_events(_events)
             callback = event.handler,
             desc = event.desc
         })
+        _events[name].status = 1
         _events[name].id = autocmd_id
     end
 end
 
-
 function Event_Manager:deactivate_events(_events)
-    if not type(_events) == "table" then
-        _events = { _events }
+    if #_events == 0 then
+        _events = { __name = _events}
     end
-
     for _, event in pairs(_events) do
         vim.api.nvim_del_autocmd(event.id)
+        event.status = 0
     end
 end
 
