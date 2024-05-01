@@ -14,10 +14,10 @@ end
 function Tracker:initialize(opts)
     local defaults = self:__generate_tracker_default_values()
     self.session_id = defaults.session_id
-    self.start_timestamp = defaults.start_timestamp
     self.events = events_configs
     self.event_debounce_time = opts.event_debounce_time
     self.is_running = true
+    self.runned_for = 0
 end
 
 ---@return table<string, string>
@@ -31,6 +31,7 @@ function Tracker:__generate_tracker_default_values()
 end
 
 function Tracker:start_timer()
+    self.timer_start_time = os.time()
     if self.is_running == false then
         self.is_running = true
     end
@@ -38,17 +39,23 @@ function Tracker:start_timer()
     local timer = vim.loop.new_timer()
 
     timer:start(1000, 3000, vim.schedule_wrap(function()
-        print("Running for " .. self:get_running_time() .. "s")
+        if self.is_running then
+            print("Running for " .. self:get_running_time() .. "s | " .. tostring(self.is_running))
+        end
     end))
 end
 
-function Tracker:pause()
+ function Tracker:pause()
     self.is_running = false
+    self.runned_for = self:get_running_time()
+end
+
+function Tracker:resume()
+    self.is_running = true
 end
 
 function Tracker:get_running_time()
-    local session_start_timestamp = self.start_timestamp
-    return os.time() - session_start_timestamp
+    return os.time() - self.timer_start_time - self.runned_for
 end
 
 return Tracker
