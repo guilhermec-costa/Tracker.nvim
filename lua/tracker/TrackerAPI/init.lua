@@ -9,14 +9,15 @@ local Tracker = {}
 function Tracker.new_tracker()
     local defaults = Tracker:__generate_tracker_default_values()
     local self = setmetatable({
-       session_id = defaults.session_id,
-       tracker_start_time = defaults.tracker_start_time,
-       default_events = events_configs
+        session_id = defaults.session_id,
+        tracker_start_time = defaults.tracker_start_time,
+        default_events = events_configs
     }, Tracker)
 
     return self
 end
 
+---@return table<string, string>
 function Tracker:__generate_tracker_default_values()
     local tracker_start_timestamp = os.time()
     local session_id = utils.generate_session_id();
@@ -24,6 +25,9 @@ function Tracker:__generate_tracker_default_values()
         tracker_start_time = tracker_start_timestamp,
         session_id = session_id
     }
+end
+
+function Tracker:setup(opts)
 end
 
 return Tracker

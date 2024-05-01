@@ -1,8 +1,13 @@
 ---@module "tracker"
-local TrackerAPI = require "tracker.Tracker"
+local TrackerAPI = require "tracker.TrackerAPI"
 local Events = require "tracker.events"
 
-local new_tracker = TrackerAPI:new_tracker()
-local event_manager = Events.Event_Manager({ name = "generator" })
-event_manager:activate_events(new_tracker.default_events.events)
-return new_tracker
+local tracker = {}
+
+function tracker.setup(opts)
+    tracker.__index = TrackerAPI:new_tracker()
+    local event_manager = Events.Event_Manager({ name = "generator" })
+    event_manager:activate_events(tracker.__index.default_events.events)
+end
+
+return tracker
