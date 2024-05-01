@@ -5,7 +5,9 @@ local Event_Manager = require "tracker.events"
 local Tracker = {}
 
 function Tracker.setup(opts)
+    opts = opts or {}
     local new_tracker = TrackerAPI.new(opts)
+    new_tracker:start_timer()
     Event_Manager:activate_events(new_tracker.events)
     Tracker.TrackerSession = new_tracker
     Event_Manager:deactivate_events(Tracker.TrackerSession.events.EnterBuffer)
@@ -30,5 +32,6 @@ function Tracker.get_inactive_events()
     end
     return inactive_events
 end
+
 
 return Tracker
