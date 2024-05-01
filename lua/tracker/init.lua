@@ -1,13 +1,8 @@
 ---@module "tracker"
-local utils = require "tracker.utils"
-local events = require "tracker.events"
-local event_handlers = require "tracker.event_handlers"
-local default_events_config = require "tracker.default_events_config"
-local tracker = {}
+local TrackerAPI = require "tracker.Tracker"
+local Events = require "tracker.events"
 
-tracker.defaults = utils.generate_tracker_default_values()
-tracker.defaults.events = utils.generate_tracker_default_events(default_events_config)
-
-
-P(tracker)
-return tracker
+local new_tracker = TrackerAPI:new_tracker()
+local event_manager = Events.Event_Manager({ name = "generator" })
+event_manager:activate_events(new_tracker.default_events.events)
+return new_tracker

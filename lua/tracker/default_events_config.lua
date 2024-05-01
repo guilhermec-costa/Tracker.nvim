@@ -11,6 +11,20 @@ return {
             type = "BufEnter",
             group = events_group,
             handler = event_handlers.handle_buf_enter
+        },
+        LeaveBuffer = {
+            pattern = "*",
+            desc = "When leaves a buffer",
+            type = "BufLeave",
+            group = events_group,
+            handler = event_handlers.handle_buf_leave
+        },
+        OnYank = {
+            pattern = "*",
+            desc = "When text is yanked",
+            type = "TextYankPost",
+            group = events_group,
+            handler = event_handlers.handle_text_yank
         }
     }
 }

@@ -1,13 +1,11 @@
 local types = {}
 
---- this
----@class tracker_defaults
 types.tracker_defaults = {
     session_id = nil,
     start_time = nil
 }
 
----@class event
+---@class Event_Type
 types.event = {
     desc = nil,
     type = nil,
