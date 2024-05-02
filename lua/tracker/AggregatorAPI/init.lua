@@ -5,6 +5,7 @@ local utils = require "tracker.utils"
 
 ---@class AggregatorAPI
 ---@field Data table
+---@field session table
 local AggregatorAPI = {}
 AggregatorAPI.__index = AggregatorAPI
 
@@ -39,8 +40,8 @@ function AggregatorAPI:add_aggregator(opts)
 
     local final_key = opts.aggregator_name or ""
     current_table[final_key] = {
-        root = 0,
-        counter = 0
+        counter = 0,
+        timer = 0
     }
 end
 

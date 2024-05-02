@@ -1,7 +1,7 @@
 ---@module "default_events_config"
 
 local events_group = vim.api.nvim_create_augroup("Events", { clear = true })
-local event_handlers = require "tracker.event_handlers"
+local event_handlers = require "tracker.EventsAPI.event_handlers"
 
 return {
     EnterBuffer = {

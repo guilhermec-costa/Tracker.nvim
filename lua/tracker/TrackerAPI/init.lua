@@ -67,20 +67,21 @@ function Tracker:start_timer(debounce)
     end
 end
 
-function Tracker:reset()
+function Tracker:reset_timer()
     if self.timer then
         self.timer:close()
         self.runned_for = 0
+        self:start_timer()
     else
         print("Any target initialized yet")
     end
 end
 
-function Tracker:pause()
+function Tracker:pause_timer()
     self.is_running = false
 end
 
-function Tracker:resume()
+function Tracker:resume_timer()
     self.is_running = true
 end
 
