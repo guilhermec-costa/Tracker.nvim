@@ -1,7 +1,7 @@
 local utils = require "tracker.utils"
 local events_configs = require "tracker.default_events_config"
+
 ---@class Tracker
----@field session_id string
 local Tracker = {}
 Tracker.__index = Tracker
 
@@ -18,6 +18,7 @@ function Tracker:initialize(opts)
     self.event_debounce_time = opts.event_debounce_time
     self.is_running = true
     self.runned_for = 0
+    self.has_timer_started = false
 end
 
 ---@return table<string, string>
@@ -51,23 +52,22 @@ function Tracker:get_inactive_events()
 end
 
 function Tracker:start_timer()
-    self.timer_start_time = os.time()
-    if self.is_running == false then
-        self.is_running = true
-    end
-
     local timer = vim.loop.new_timer()
-
-    timer:start(1000, 3000, vim.schedule_wrap(function()
-        if self.is_running then
-            print("Running for " .. self:get_running_time() .. "s | " .. tostring(self.is_running))
-        end
-    end))
+    local delay = 3000
+    if self.has_timer_started == false then
+        timer:start(1000, delay, vim.schedule_wrap(function()
+            if self.is_running then
+                self.runned_for = self.runned_for + (delay / 1000)
+            end
+        end))
+        self.has_timer_started = true
+    else
+        print("Timer has already started")
+    end
 end
 
- function Tracker:pause()
+function Tracker:pause()
     self.is_running = false
-    self.runned_for = self:get_running_time()
 end
 
 function Tracker:resume()
@@ -75,7 +75,7 @@ function Tracker:resume()
 end
 
 function Tracker:get_running_time()
-    return os.time() - self.timer_start_time - self.runned_for
+    return self.runned_for
 end
 
 return Tracker

@@ -3,18 +3,21 @@ local TrackerAPI = require "tracker.TrackerAPI"
 local EventsAPI = require "tracker.EventsAPI"
 require "tracker.commands"
 
-local Tracker = {}
+local Tracker = {
+    Session = {},
+    Data = {}
+}
 
 function Tracker.setup(opts)
     opts = opts or {}
-    Tracker.TrackerSession = TrackerAPI.new(opts)
+    Tracker.Session = TrackerAPI.new(opts)
     if opts.start_timer_on_launch then
-        Tracker.TrackerSession:start_timer()
+        Tracker.Session:start_timer()
     end
 
     -- dependency injection
-    local Event_Manager = EventsAPI.new(Tracker.TrackerSession)
-    Event_Manager:activate_events(Tracker.TrackerSession.events)
+    local Event_Manager = EventsAPI.new(Tracker.Session)
+    Event_Manager:activate_events(Tracker.Session.events)
 end
 
 return Tracker

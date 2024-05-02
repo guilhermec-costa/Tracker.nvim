@@ -1,20 +1,26 @@
 local types = require "tracker.types"
 
 ---@class Event_Manager
+---@field corresponding_session table
 local Event_Manager = {}
 Event_Manager.__index = Event_Manager
 
 
+---@param opts table
+---@return table
 function Event_Manager.new(opts)
     local self = setmetatable({}, Event_Manager)
     self:initialize(opts)
     return self
 end
 
+---@param opts table
+---@return nil
 function Event_Manager:initialize(opts)
     self.corresponding_session = opts
 end
 
+---@param _events table
 function Event_Manager:activate_events(_events)
     for name, event in pairs(_events) do
         local autocmd_id = vim.api.nvim_create_autocmd(event.type, {
