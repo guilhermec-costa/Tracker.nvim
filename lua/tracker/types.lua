@@ -13,4 +13,10 @@ types.event = {
     pattern = nil,
     handler = nil
 }
+
+---@class New_Aggregator
+types.new_aggregator = {
+    aggregator_name = nil,
+    aggregator_path = nil
+}
 return types

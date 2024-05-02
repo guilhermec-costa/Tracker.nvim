@@ -3,10 +3,8 @@
 local event_handler = {}
 
 event_handler.handle_buf_enter = function(data)
-    local buffer_data = data.Data.session_scoped.buffers
-    local bufname = vim.fn.expand("%")
-    print(bufname)
-    --[[ buffer_data.counter = buffer_data.counter + 1 ]]
+    --[[ local filetype_aggregator = data.Data.session_scoped.buffers.aggregators.filetype ]]
+    --[[ local bufname = vim.fn.expand("%") ]]
 end
 
 

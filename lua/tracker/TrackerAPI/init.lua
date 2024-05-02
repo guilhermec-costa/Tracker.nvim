@@ -51,14 +51,14 @@ function Tracker:get_inactive_events()
     return inactive_events
 end
 
-function Tracker:start_timer()
+function Tracker:start_timer(debounce)
+    debounce = debounce or 5000
     local timer = vim.loop.new_timer()
     self.timer = timer
-    local delay = 3000
     if self.has_timer_started == false then
-        timer:start(1000, delay, vim.schedule_wrap(function()
+        timer:start(100, debounce, vim.schedule_wrap(function()
             if self.is_running then
-                self.runned_for = self.runned_for + (delay / 1000)
+                self.runned_for = self.runned_for + (debounce/ 1000)
             end
         end))
         self.has_timer_started = true
@@ -71,10 +71,10 @@ function Tracker:reset()
     if self.timer then
         self.timer:close()
         self.runned_for = 0
-    else print("Any target initialized yet")
+    else
+        print("Any target initialized yet")
     end
 end
-
 
 function Tracker:pause()
     self.is_running = false
