@@ -11,7 +11,7 @@ AggregatorAPI.__index = AggregatorAPI
 
 
 ---@return table
-function AggregatorAPI.new_aggregator(session)
+function AggregatorAPI.new_aggregator()
     local self = setmetatable({}, AggregatorAPI)
     self.Data = {}
     self:initialize()
@@ -29,6 +29,10 @@ end
 
 ---@param opts New_Aggregator
 function AggregatorAPI:add_aggregator(opts)
+    if string.find(opts.aggregator_path, "/tmp", 0) then
+        return
+    end
+
     local splitted_paths = utils.split_string(opts.aggregator_path, ".")
 
     local current_table = self.Data
