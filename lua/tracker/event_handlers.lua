@@ -2,17 +2,18 @@
 
 local event_handler = {}
 
-event_handler.handle_buf_enter = function(opts)
-    P(vim.bo.filetype)
+event_handler.handle_buf_enter = function(data)
+    local buffer_data = data.Data.session_scoped.buffers
+    local bufname = vim.fn.expand("%")
+    print(bufname)
+    --[[ buffer_data.counter = buffer_data.counter + 1 ]]
 end
 
 
-event_handler.handle_buf_leave = function(opts)
-    --[[ print("Left the buffer") ]]
+event_handler.handle_buf_leave = function(data)
 end
 
-event_handler.handle_text_yank = function(opts)
-    print("Text was yanked")
+event_handler.handle_text_yank = function(data)
 end
 
 return event_handler

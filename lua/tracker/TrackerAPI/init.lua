@@ -5,7 +5,7 @@ local events_configs = require "tracker.default_events_config"
 local Tracker = {}
 Tracker.__index = Tracker
 
-function Tracker.new(opts)
+function Tracker.new_session(opts)
     local self = setmetatable({}, Tracker)
     self:initialize(opts)
     return self
@@ -53,6 +53,7 @@ end
 
 function Tracker:start_timer()
     local timer = vim.loop.new_timer()
+    self.timer = timer
     local delay = 3000
     if self.has_timer_started == false then
         timer:start(1000, delay, vim.schedule_wrap(function()
@@ -65,6 +66,15 @@ function Tracker:start_timer()
         print("Timer has already started")
     end
 end
+
+function Tracker:reset()
+    if self.timer then
+        self.timer:close()
+        self.runned_for = 0
+    else print("Any target initialized yet")
+    end
+end
+
 
 function Tracker:pause()
     self.is_running = false
