@@ -70,9 +70,7 @@ end
 
 event_handler.handle_buf_leave = function(data)
     local bufname = vim.fn.expand("%")
-    local bufext = vim.bo.filetype
     local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
-    local filetype_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filetype
 
     if bufname ~= "" and bufname ~= "." then
         local current_buf_data = filepath_aggregator[bufname]

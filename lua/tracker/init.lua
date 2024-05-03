@@ -1,7 +1,8 @@
----@module "tracker"
 local TrackerAPI = require "tracker.TrackerAPI"
 local EventsAPI = require "tracker.EventsAPI"
 local AggregatorAPI = require "tracker.AggregatorAPI"
+local PersistencyAPI = require "tracker.PersistencyAPI"
+
 require "tracker.commands"
 
 local Tracker = {}
@@ -15,6 +16,7 @@ function Tracker.setup(opts)
 
     -- dependency injection
     Tracker.Aggregator = AggregatorAPI.new_aggregator()
+    Tracker.Storage = PersistencyAPI.new_storage()
     local Event_Manager = EventsAPI.new(Tracker)
     Event_Manager:activate_events(Tracker.Session.events)
 end
