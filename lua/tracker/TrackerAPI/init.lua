@@ -1,5 +1,6 @@
 local utils = require "tracker.utils"
 local events_configs = require "tracker.default_events_config"
+local notifier = require "notify"
 
 ---@class Tracker
 local Tracker = {}
@@ -19,6 +20,7 @@ function Tracker:initialize(opts)
     self.is_running = true
     self.runned_for = 0
     self.has_timer_started = false
+    self.allow_notifications = opts.allow_notifications
 end
 
 ---@return table<string, string>
@@ -56,6 +58,7 @@ function Tracker:start_timer(debounce)
     local timer = vim.loop.new_timer()
     self.timer = timer
     if self.has_timer_started == false then
+        notifier("Tracker Timer has started")
         timer:start(100, debounce, vim.schedule_wrap(function()
             if self.is_running then
                 self.runned_for = self.runned_for + (debounce/ 1000)

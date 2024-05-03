@@ -14,7 +14,7 @@ function Tracker.setup(opts)
     end
 
     -- dependency injection
-    Tracker.Aggregator = AggregatorAPI.new_aggregator(Tracker)
+    Tracker.Aggregator = AggregatorAPI.new_aggregator()
     local Event_Manager = EventsAPI.new(Tracker)
     Event_Manager:activate_events(Tracker.Session.events)
 end
