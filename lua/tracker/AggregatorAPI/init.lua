@@ -49,4 +49,23 @@ function AggregatorAPI:add_aggregator(opts)
     }
 end
 
+function AggregatorAPI:remove_aggregator(aggregator_path)
+    local splitted_paths = utils.split_string(aggregator_path, ".")
+    local current_table = self.Data
+    for i = 1, #splitted_paths - 1 do
+        local key = splitted_paths[i]
+        current_table[key] = current_table[key] or {}
+        current_table = current_table[key]
+    end
+
+    local final_key = splitted_paths[#splitted_paths] or nil
+    if final_key then
+        current_table[final_key] = nil
+    end
+end
+
+function AggregatorAPI:get_aggregators()
+    return self.Data
+end
+
 return AggregatorAPI
