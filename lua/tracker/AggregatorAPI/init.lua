@@ -65,6 +65,7 @@ function AggregatorAPI:remove_aggregator(aggregator_path)
 end
 
 function AggregatorAPI:get_aggregators()
+    table.sort(self.Data)
     return self.Data
 end
 
