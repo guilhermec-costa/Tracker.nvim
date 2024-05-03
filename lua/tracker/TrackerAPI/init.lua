@@ -58,7 +58,7 @@ function Tracker:start_timer(debounce)
     local timer = vim.loop.new_timer()
     self.timer = timer
     if self.has_timer_started == false then
-        notify("Tracker Timer has started")
+        self:notify("Tracker Timer has started")
         timer:start(100, debounce, vim.schedule_wrap(function()
             if self.is_running then
                 self.runned_for = self.runned_for + (debounce / 1000)
