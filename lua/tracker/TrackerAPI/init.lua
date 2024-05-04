@@ -1,6 +1,7 @@
 local utils = require "tracker.utils"
 local events_configs = require "tracker.default_events_config"
 local notify = require "notify"
+local notifier = require "tracker.TrackerAPI.Notifier"
 
 ---@class Tracker
 local Tracker = {}
@@ -21,6 +22,7 @@ function Tracker:initialize(opts)
     self.runned_for = 0
     self.has_timer_started = false
     self.allow_notifications = opts.allow_notifications
+    self.Notifier = notifier.new()
 end
 
 ---@return table<string, string>
@@ -66,7 +68,7 @@ function Tracker:start_timer(debounce)
         end))
         self.has_timer_started = true
     else
-        notify("Timer has already been started")
+        self:notify("Timer has already been started", "error")
     end
 end
 
@@ -76,15 +78,15 @@ function Tracker:reset_timer()
         self.runned_for = 0
         self.has_timer_started = false
         self:start_timer()
-        self:notify("Tracker paused has been reset")
+        self:notify("Tracker paused has been reset", "success")
     else
-        self:notify("Any target initialized yet")
+        self:notify("Any target initialized yet", "error")
     end
 end
 
 function Tracker:pause_timer()
     self.is_running = false
-    self:notify("Tracker timer has been paused")
+    self:notify("Tracker timer has been paused", "info")
 end
 
 function Tracker:resume_timer()
@@ -99,10 +101,16 @@ function Tracker:get_running_time()
     return self.runned_for
 end
 
-
-function Tracker:notify(message)
+function Tracker:notify(message, type)
+    type = type or "success"
     if self.allow_notifications then
-        notify(message)
+        if type == "info" then
+            self.Notifier:notify_info(message)
+        elseif type == "error" then
+            self.Notifier:notify_error(message)
+        else
+            self.Notifier:notify_success(message)
+        end
     else
         print(message)
     end
