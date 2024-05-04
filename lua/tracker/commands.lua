@@ -34,14 +34,12 @@ local tracker_commands = {
 }
 
 
-
 commands.trigger_tracker_commands = function(opts)
     opts = opts or {}
     local results = {}
     for cmd_name, _ in pairs(tracker_commands) do
         table.insert(results, cmd_name)
     end
-    P(results)
     pickers.new(opts, {
         prompt_title = "Tracker Commands",
         finder = finders.new_table {

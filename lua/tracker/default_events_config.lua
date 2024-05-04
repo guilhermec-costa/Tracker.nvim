@@ -24,5 +24,12 @@ return {
         type = "BufLeave",
         group = events_group,
         handler = event_handlers.handle_buf_leave
-    }
+    },
+    VimEnter = {
+        pattern = "*",
+        desc = "When enters vim",
+        type = "VimEnter",
+        group = events_group,
+        handler = event_handlers.handle_vim_enter
+    },
 }

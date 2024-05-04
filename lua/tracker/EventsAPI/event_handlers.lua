@@ -85,6 +85,35 @@ event_handler.handle_buf_leave = function(data)
 end
 
 event_handler.handle_text_yank = function(data)
+    local bufname = vim.fn.expand("%")
+    local bufext = vim.bo.filetype
+
+    local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
+    local filetype_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filetype
+
+    local current_buf_data = filepath_aggregator[bufname]
+
+    if filepath_aggregator.yanked == nil then
+        filepath_aggregator.yanked = 1
+    else
+        filepath_aggregator.yanked = filepath_aggregator.yanked + 1
+    end
+
+    if filetype_aggregator[bufext].yanked == nil then
+        filetype_aggregator[bufext].yanked = 1
+    else
+        filetype_aggregator[bufext].yanked = filetype_aggregator[bufext].yanked + 1
+    end
+
+    if current_buf_data.yanked == nil then
+        current_buf_data.yanked = 1
+    else
+        current_buf_data.yanked = current_buf_data.yanked + 1
+    end
+end
+
+event_handler.handle_vim_enter = function(data)
+    print("Entered vim")
 end
 
 return event_handler
