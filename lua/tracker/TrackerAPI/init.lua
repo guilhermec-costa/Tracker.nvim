@@ -22,7 +22,9 @@ function Tracker:initialize(opts)
     self.runned_for = 0
     self.has_timer_started = false
     self.allow_notifications = opts.allow_notifications
-    self.Notifier = notifier.new()
+    self.Notifier = notifier.new({
+        title = "Tracker",
+    })
 end
 
 ---@return table<string, string>
@@ -39,7 +41,7 @@ function Tracker:get_active_events()
     local active_events = {}
     for event_name, event_metadata in pairs(self.events) do
         if event_metadata.status == 1 then
-            table.insert(active_events, event_metadata)
+            table.insert(active_events, { [event_name] = event_metadata })
         end
     end
     return active_events

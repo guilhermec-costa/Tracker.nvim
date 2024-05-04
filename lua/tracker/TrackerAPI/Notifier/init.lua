@@ -6,15 +6,16 @@ Notifier.__index = Notifier
 
 
 ---@return table
-function Notifier.new()
+function Notifier.new(opts)
     local self = setmetatable({}, Notifier)
-    self:initialize()
+    self:initialize(opts)
     return self
 end
 
 ---@return nil
-function Notifier:initialize()
+function Notifier:initialize(opts)
     self.notifier = notify
+    self.default_notifier_title = opts.title
 end
 
 ---@return nil
@@ -27,7 +28,9 @@ function Notifier:notify_error(message)
 end
 
 function Notifier:notify_info(message)
-    self.notifier(message, "info")
+    self.notifier(message, "info", {
+        title = self.default_notifier_title
+    })
 end
 
 return Notifier
