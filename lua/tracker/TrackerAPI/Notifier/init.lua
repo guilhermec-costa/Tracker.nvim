@@ -1,5 +1,6 @@
 local notify = require "notify"
 
+
 ---@class Notifier
 local Notifier = {}
 Notifier.__index = Notifier
@@ -29,7 +30,8 @@ end
 
 function Notifier:notify_info(message)
     self.notifier(message, "info", {
-        title = self.default_notifier_title
+        title = self.default_notifier_title,
+        background = "#ff0000"
     })
 end
 

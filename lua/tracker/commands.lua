@@ -1,30 +1,68 @@
 local utils = require "tracker.utils"
 local commands = {}
+local pickers = require "telescope.pickers"
+local finders = require "telescope.finders"
+local conf = require("telescope.config").values
+local actions = require "telescope.actions"
+local action_state = require "telescope.actions.state"
 
 local function get_session_aggregators(opts)
     local args = opts.args or nil
     local splitted_paths = utils.split_string(args, " ")
     if #splitted_paths > 0 then
-        for i, arg in splitted_paths do
-
+        local accessors_path_string = ""
+        for i, arg in ipairs(splitted_paths) do
+            accessors_path_string = accessors_path_string .. "['" .. splitted_paths[i] .. "']"
         end
-    end
-    if #splitted_paths == 1 then
-        vim.api.nvim_command(
-            "lua P(require('tracker').Aggregator:get_aggregators().session_scoped.buffers.aggregators['" ..
-            splitted_paths[1] .. "'])")
+        local command = "lua P(require('tracker').Aggregator:get_aggregators().session_scoped.buffers.aggregators" ..
+            accessors_path_string .. ")"
+        local cmd_status, _ = pcall(vim.api.nvim_command, command)
     else
-        vim.api.nvim_command(
-            "lua P(require('tracker').Aggregator:get_aggregators().session_scoped.buffers.aggregators)")
+        local command = "lua P(require('tracker').Aggregator:get_aggregators().session_scoped.buffers.aggregators)"
+        local cmd_status, _ = pcall(vim.api.nvim_command, command)
     end
 end
 
-vim.api.nvim_create_user_command("TrackerPauseTimer", "lua require('tracker').Session:pause_timer()", {})
-vim.api.nvim_create_user_command("TrackerResumeTimer", "lua require('tracker').Session:resume_timer()", {})
-vim.api.nvim_create_user_command("TrackerStartTimer", "lua require('tracker').Session:start_timer()", {})
-vim.api.nvim_create_user_command("TrackerResetTimer", "lua require('tracker').Session:reset_timer()", {})
-vim.api.nvim_create_user_command("TrackerGetSessionAggregators", get_session_aggregators, { nargs = "?" })
-vim.api.nvim_create_user_command("TrackerGetActiveEvents", "lua P(require('tracker').Session:get_active_events())", {})
-vim.api.nvim_create_user_command("TrackerGetInactiveEvents", "lua P(require('tracker').Session:get_active_events())", {})
+local tracker_commands = {
+    TrackerPauseTimer = { action = "lua require('tracker').Session:pause_timer()" },
+    TrackerStartTimer = { action = "lua require('tracker').Session:start_timer()" },
+    TrackerResumeTimer = { action = "lua require('tracker').Session:resume_timer()" },
+    TrackerResetTimer = { action = "lua require('tracker').Session:reset_timer()" },
+    TrackerGetSessionAggregators = { action = get_session_aggregators, opts = { nargs = "?" } },
+    TrackerGetActiveEvents = { action = "lua P(require('tracker').Session:get_active_events())" },
+    TrackerGetInactiveEvents = { action = "lua P(require('tracker').Session:get_inactive_events())" }
+}
+
+
+
+commands.trigger_tracker_commands = function(opts)
+    opts = opts or {}
+    local results = {}
+    for cmd_name, _ in pairs(tracker_commands) do
+        table.insert(results, cmd_name)
+    end
+    P(results)
+    pickers.new(opts, {
+        prompt_title = "Tracker Commands",
+        finder = finders.new_table {
+            results = results
+        },
+        sorter = conf.generic_sorter(opts),
+        attach_mappings = function(prompt_bufnr, map)
+            actions.select_default:replace(function()
+                actions.close(prompt_bufnr)
+                local selection = action_state.get_selected_entry()
+                vim.cmd(selection[1])
+            end)
+            return true
+        end,
+    }):find()
+end
+
+
+for cmd_name, action_opts in pairs(tracker_commands) do
+    local extra_opts = action_opts.opts or {}
+    vim.api.nvim_create_user_command(cmd_name, action_opts.action, extra_opts)
+end
 
 return commands
