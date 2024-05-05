@@ -27,7 +27,7 @@ function Event_Manager:activate_events(_events)
             pattern = event.pattern,
             group = event.group,
             callback = function()
-                event.handler(self.corresponding_session)
+                pcall(event.handler, self.corresponding_session)
             end,
             desc = event.desc
         })

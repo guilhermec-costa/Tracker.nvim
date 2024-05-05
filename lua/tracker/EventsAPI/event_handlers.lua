@@ -87,36 +87,67 @@ event_handler.handle_buf_leave = function(data)
     end
 end
 
+
+local function increment_counter(aggregator, key, start_value)
+    start_value = start_value or 1
+    if aggregator[key] == nil then
+        aggregator[key] = start_value
+    else
+        aggregator[key] = aggregator[key] + 1
+    end
+end
+
 event_handler.handle_text_yank = function(data)
     local bufname = vim.fn.expand("%")
     local bufext = vim.bo.filetype
 
+
     local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
     local filetype_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filetype
 
-    local current_buf_data = filepath_aggregator[bufname]
-
-    if filepath_aggregator.yanked == nil then
-        filepath_aggregator.yanked = 1
-    else
-        filepath_aggregator.yanked = filepath_aggregator.yanked + 1
-    end
-
-    if filetype_aggregator[bufext].yanked == nil then
-        filetype_aggregator[bufext].yanked = 1
-    else
-        filetype_aggregator[bufext].yanked = filetype_aggregator[bufext].yanked + 1
-    end
-
-    if current_buf_data.yanked == nil then
-        current_buf_data.yanked = 1
-    else
-        current_buf_data.yanked = current_buf_data.yanked + 1
-    end
+    increment_counter(filepath_aggregator, "yanked")
+    increment_counter(filetype_aggregator[bufext], "yanked")
+    increment_counter(filepath_aggregator[bufname], "yanked")
 end
 
-event_handler.handle_vim_enter = function(data)
-    print("Entered vim")
+event_handler.handle_ui_enter = function(data)
+    local bufname = vim.fn.expand("%")
+    local bufext = vim.bo.filetype
+
+
+    local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
+    local filetype_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filetype
+
+    increment_counter(filepath_aggregator, "ui_interactions")
+    increment_counter(filetype_aggregator[bufext], "ui_interactions")
+    increment_counter(filepath_aggregator[bufname], "ui_interactions")
+end
+
+event_handler.handle_cmdline_leave = function(data)
+    local bufname = vim.fn.expand("%")
+    local bufext = vim.bo.filetype
+
+
+    local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
+    local filetype_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filetype
+
+    increment_counter(filepath_aggregator, "cmd_mode")
+    increment_counter(filetype_aggregator[bufext], "cmd_mode")
+    increment_counter(filepath_aggregator[bufname], "cmd_mode")
+end
+
+
+event_handler.handle_insert_enter = function(data)
+    local bufname = vim.fn.expand("%")
+    local bufext = vim.bo.filetype
+
+
+    local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
+    local filetype_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filetype
+
+    increment_counter(filepath_aggregator, "insert")
+    increment_counter(filetype_aggregator[bufext], "insert")
+    increment_counter(filepath_aggregator[bufname], "insert")
 end
 
 return event_handler

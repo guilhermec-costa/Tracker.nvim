@@ -25,11 +25,25 @@ return {
         group = events_group,
         handler = event_handlers.handle_buf_leave
     },
-    VimEnter = {
+    CmdLineLeave= {
         pattern = "*",
-        desc = "When enters vim",
-        type = "VimEnter",
+        desc = "When leave cmd line mode",
+        type = "CmdlineLeave",
         group = events_group,
-        handler = event_handlers.handle_vim_enter
+        handler = event_handlers.handle_cmdline_leave
+    },
+    UIInteraction = {
+        pattern = "*",
+        desc = "When any UI interaction is made",
+        type = "UIEnter",
+        group = events_group,
+        handler = event_handlers.handle_ui_enter
+    },
+    InsertMode = {
+        pattern = "*",
+        desc = "When enters insert mode",
+        type = "InsertEnter",
+        group = events_group,
+        handler = event_handlers.handle_insert_enter
     },
 }
