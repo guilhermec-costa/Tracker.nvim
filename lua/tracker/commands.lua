@@ -50,7 +50,7 @@ commands.trigger_tracker_commands = function(opts)
             actions.select_default:replace(function()
                 actions.close(prompt_bufnr)
                 local selection = action_state.get_selected_entry()
-                vim.cmd(selection[1])
+                vim.api.nvim_command(tracker_commands[selection[1]].action)
             end)
             return true
         end,
