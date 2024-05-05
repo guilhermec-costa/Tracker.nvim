@@ -115,7 +115,8 @@ event_handler.handle_text_yank = function(data)
     increment_counter(filepath_aggregator[bufname], "yanked")
 end
 
-event_handler.handle_ui_enter = function(data)
+event_handler.handle_lost_focus = function(data)
+    print("herer")
     local bufname = vim.fn.expand("%")
     local bufext = vim.bo.filetype
 
@@ -123,9 +124,9 @@ event_handler.handle_ui_enter = function(data)
     local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
     local filetype_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filetype
 
-    increment_counter(filepath_aggregator, "ui_interactions")
-    increment_counter(filetype_aggregator[bufext], "ui_interactions")
-    increment_counter(filepath_aggregator[bufname], "ui_interactions")
+    increment_counter(filepath_aggregator, "lost_focus")
+    increment_counter(filetype_aggregator[bufext], "lost_focus")
+    increment_counter(filepath_aggregator[bufname], "lost_focus")
 end
 
 event_handler.handle_cmdline_leave = function(data)
@@ -168,10 +169,11 @@ event_handler.handle_buf_write = function(data)
     increment_counter(filepath_aggregator[bufname], "saved")
 end
 
-event_handler.handle_insert_char_pre = function (data)
+event_handler.handle_insert_char_pre = function(data)
     local bufname = vim.fn.expand("%")
     local bufext = vim.bo.filetype
     local char_typed = vim.v.char
+
 
 
     local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
@@ -185,10 +187,58 @@ event_handler.handle_insert_char_pre = function (data)
         filepath_aggregator[bufname].chars = {}
     end
 
+    if filetype_aggregator.chars == nil then
+        filetype_aggregator.chars = {}
+    end
+
+    if filetype_aggregator[bufext].chars == nil then
+        filetype_aggregator[bufext].chars = {}
+    end
+
     increment_counter(filepath_aggregator.chars, char_typed)
     increment_counter(filepath_aggregator, "keystrokes")
     increment_counter(filepath_aggregator[bufname].chars, char_typed)
     increment_counter(filepath_aggregator[bufname], "keystrokes")
+end
+
+event_handler.handle_buf_add = function(data)
+    local bufext = vim.bo.filetype
+    local buffer_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators
+    local filetype_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filetype
+
+    if bufext == "" or bufext == "netrw" then
+        return
+    end
+
+    if filetype_aggregator[bufext] == nil then
+        data.Aggregator:add_aggregator({
+            aggregator_name = bufext,
+            aggregator_path = "session_scoped.buffers.aggregators.filetype"
+        })
+    end
+
+    increment_counter(buffer_aggregator, "buffers_added")
+    increment_counter(filetype_aggregator[bufext], "buffers_added")
+end
+
+event_handler.handle_buf_delete = function(data)
+    local bufext = vim.bo.filetype
+    local buffer_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators
+    local filetype_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filetype
+
+    if bufext == "" or bufext == "netrw" then
+        return
+    end
+
+    if filetype_aggregator[bufext] == nil then
+        data.Aggregator:add_aggregator({
+            aggregator_name = bufext,
+            aggregator_path = "session_scoped.buffers.aggregators.filetype"
+        })
+    end
+
+    increment_counter(buffer_aggregator, "buffers_deleted")
+    increment_counter(filetype_aggregator[bufext], "buffers_deleted")
 end
 
 return event_handler

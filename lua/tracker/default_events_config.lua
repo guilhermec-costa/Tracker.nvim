@@ -25,19 +25,19 @@ return {
         group = events_group,
         handler = event_handlers.handle_buf_leave
     },
-    CmdLineLeave= {
+    CmdLineLeave = {
         pattern = "*",
         desc = "When leave cmd line mode",
         type = "CmdlineLeave",
         group = events_group,
         handler = event_handlers.handle_cmdline_leave
     },
-    UIInteraction = {
+    LostFocus = {
         pattern = "*",
         desc = "When any UI interaction is made",
         type = "FocusLost",
         group = events_group,
-        handler = event_handlers.handle_ui_enter
+        handler = event_handlers.handle_lost_focus
     },
     InsertMode = {
         pattern = "*",
@@ -59,5 +59,19 @@ return {
         type = "InsertCharPre",
         group = events_group,
         handler = event_handlers.handle_insert_char_pre
+    },
+    AddBuffer = {
+        pattern = "*",
+        desc = "After adding a buffer",
+        type = "BufAdd",
+        group = events_group,
+        handler = event_handlers.handle_buf_add
+    },
+    DeleteBuffer = {
+        pattern = "*",
+        desc = "After adding a buffer",
+        type = "BufDelete",
+        group = events_group,
+        handler = event_handlers.handle_buf_delete
     },
 }
