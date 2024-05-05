@@ -30,7 +30,8 @@ local tracker_commands = {
     TrackerResetTimer = { action = "lua require('tracker').Session:reset_timer()" },
     TrackerGetSessionAggregators = { action = get_session_aggregators, opts = { nargs = "?" } },
     TrackerGetActiveEvents = { action = "lua P(require('tracker').Session:get_active_events())" },
-    TrackerGetInactiveEvents = { action = "lua P(require('tracker').Session:get_inactive_events())" }
+    TrackerGetInactiveEvents = { action = "lua P(require('tracker').Session:get_inactive_events())" },
+    TrackerGetBuffers = { action = "lua P(require('tracker').Aggregator:get_buffers())" }
 }
 
 

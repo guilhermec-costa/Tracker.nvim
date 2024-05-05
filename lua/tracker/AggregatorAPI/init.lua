@@ -69,4 +69,15 @@ function AggregatorAPI:get_aggregators()
     return self.Data
 end
 
+function AggregatorAPI:get_buffers()
+    local formmated_buffers = {}
+    local filepath_aggregator = self.Data.session_scoped.buffers.aggregators.filepath
+    for key, info in pairs(filepath_aggregator) do
+        if key ~= "timer" and key ~= "counter" then
+            table.insert(formmated_buffers, info.metadata.name)
+        end
+    end
+    return formmated_buffers
+end
+
 return AggregatorAPI
