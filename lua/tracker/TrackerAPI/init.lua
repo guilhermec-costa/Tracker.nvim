@@ -66,6 +66,7 @@ function Tracker:start_timer(debounce)
         timer:start(100, debounce, vim.schedule_wrap(function()
             if self.is_running then
                 self.runned_for = self.runned_for + (debounce / 1000)
+                -- persist-frequency logic goes here
             end
         end))
         self.has_timer_started = true

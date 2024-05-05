@@ -46,6 +46,13 @@ return {
         group = events_group,
         handler = event_handlers.handle_insert_enter
     },
+    InsertLeave = {
+        pattern = "*",
+        desc = "When leaves insert mode",
+        type = "InsertLeave",
+        group = events_group,
+        handler = event_handlers.handle_insert_leave
+    },
     BufWrite = {
         pattern = "*",
         desc = "When saves a buffer",
@@ -74,4 +81,25 @@ return {
         group = events_group,
         handler = event_handlers.handle_buf_delete
     },
+    RecordedMacros = {
+        pattern = "*",
+        desc = "After recording a vim macro",
+        type = "RecordingLeave",
+        group = events_group,
+        handler = event_handlers.handle_recorded_macro
+    },
+    ModeChanged = {
+        pattern = "*",
+        desc = "After change vim mode",
+        type = "ModeChanged",
+        group = events_group,
+        handler = event_handlers.handle_mode_change
+    },
+    --[[ ImBored = { ]]
+    --[[     pattern = "*", ]]
+    --[[     desc = "Yep, you pressed the same key 42 times and were able to trigger this fucking event", ]]
+    --[[     type = "UserGettingBored", ]]
+    --[[     group = events_group, ]]
+    --[[     handler = event_handlers.handle_bored_user ]]
+    --[[ }, ]]
 }

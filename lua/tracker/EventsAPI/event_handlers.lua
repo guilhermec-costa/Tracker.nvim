@@ -151,9 +151,21 @@ event_handler.handle_insert_enter = function(data)
     local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
     local filetype_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filetype
 
-    increment_counter(filepath_aggregator, "insert")
-    increment_counter(filetype_aggregator[bufext], "insert")
-    increment_counter(filepath_aggregator[bufname], "insert")
+    increment_counter(filepath_aggregator, "insert_mode")
+    increment_counter(filetype_aggregator[bufext], "insert_mode")
+    increment_counter(filepath_aggregator[bufname], "insert_mode")
+end
+
+event_handler.handle_insert_leave = function(data)
+    local bufname = vim.fn.expand("%")
+    local bufext = vim.bo.filetype
+
+    local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
+    local filetype_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filetype
+
+    increment_counter(filepath_aggregator, "normal")
+    increment_counter(filetype_aggregator[bufext], "normal")
+    increment_counter(filepath_aggregator[bufname], "normal")
 end
 
 event_handler.handle_buf_write = function(data)
@@ -173,9 +185,6 @@ event_handler.handle_insert_char_pre = function(data)
     local bufname = vim.fn.expand("%")
     local bufext = vim.bo.filetype
     local char_typed = vim.v.char
-
-
-
     local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
     local filetype_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filetype
 
@@ -187,10 +196,6 @@ event_handler.handle_insert_char_pre = function(data)
         filepath_aggregator[bufname].chars = {}
     end
 
-    if filetype_aggregator.chars == nil then
-        filetype_aggregator.chars = {}
-    end
-
     if filetype_aggregator[bufext].chars == nil then
         filetype_aggregator[bufext].chars = {}
     end
@@ -199,6 +204,9 @@ event_handler.handle_insert_char_pre = function(data)
     increment_counter(filepath_aggregator, "keystrokes")
     increment_counter(filepath_aggregator[bufname].chars, char_typed)
     increment_counter(filepath_aggregator[bufname], "keystrokes")
+    increment_counter(filetype_aggregator, "keystrokes")
+    increment_counter(filetype_aggregator[bufext], "keystrokes")
+    increment_counter(filetype_aggregator[bufext].chars, char_typed)
 end
 
 event_handler.handle_buf_add = function(data)
@@ -239,6 +247,35 @@ event_handler.handle_buf_delete = function(data)
 
     increment_counter(buffer_aggregator, "buffers_deleted")
     increment_counter(filetype_aggregator[bufext], "buffers_deleted")
+end
+
+event_handler.handle_dir_changed = function(data)
+end
+
+event_handler.handle_recorded_macro = function(data)
+    local bufname = vim.fn.expand("%")
+    local bufext = vim.bo.filetype
+    local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
+    local filetype_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filetype
+
+    increment_counter(filepath_aggregator, "recorded_macros")
+    increment_counter(filepath_aggregator[bufname], "recorded_macros")
+    increment_counter(filetype_aggregator[bufext], "recorded_macros")
+end
+
+event_handler.handle_mode_change = function(data)
+    local bufname = vim.fn.expand("%")
+    local bufext = vim.bo.filetype
+    local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
+    local filetype_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filetype
+
+    increment_counter(filepath_aggregator, "mode_change")
+    increment_counter(filepath_aggregator[bufname], "mode_change")
+    increment_counter(filetype_aggregator[bufext], "mode_change")
+end
+
+event_handler.handle_bored_user = function(data)
+    print("How have you event got here?")
 end
 
 return event_handler
