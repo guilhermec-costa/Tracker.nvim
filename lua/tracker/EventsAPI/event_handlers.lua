@@ -75,15 +75,20 @@ event_handler.handle_buf_leave = function(data)
     local bufname = vim.fn.expand("%")
     local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
 
-    if bufname ~= "" and bufname ~= "." then
-        local current_buf_data = filepath_aggregator[bufname]
-        if current_buf_data ~= nil then
-            if current_buf_data.metadata.buf_timer_status == 1 then
-                current_buf_data.__buf_timer:close()
-                current_buf_data.metadata.buf_timer_status = 0
-                filepath_aggregator.timer = filepath_aggregator.timer + filepath_aggregator[bufname].timer
-            end
-        end
+    if bufname == "" or bufname == "." then
+        return
+    end
+
+    local current_buf_data = filepath_aggregator[bufname]
+
+    if current_buf_data == nil then
+        return
+    end
+
+    if current_buf_data.metadata.buf_timer_status == 1 then
+        current_buf_data.__buf_timer:close()
+        current_buf_data.metadata.buf_timer_status = 0
+        filepath_aggregator.timer = filepath_aggregator.timer + filepath_aggregator[bufname].timer
     end
 end
 
@@ -148,6 +153,42 @@ event_handler.handle_insert_enter = function(data)
     increment_counter(filepath_aggregator, "insert")
     increment_counter(filetype_aggregator[bufext], "insert")
     increment_counter(filepath_aggregator[bufname], "insert")
+end
+
+event_handler.handle_buf_write = function(data)
+    local bufname = vim.fn.expand("%")
+    local bufext = vim.bo.filetype
+
+
+    local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
+    local filetype_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filetype
+
+    increment_counter(filepath_aggregator, "saved")
+    increment_counter(filetype_aggregator[bufext], "saved")
+    increment_counter(filepath_aggregator[bufname], "saved")
+end
+
+event_handler.handle_insert_char_pre = function (data)
+    local bufname = vim.fn.expand("%")
+    local bufext = vim.bo.filetype
+    local char_typed = vim.v.char
+
+
+    local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
+    local filetype_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filetype
+
+    if filepath_aggregator.chars == nil then
+        filepath_aggregator.chars = {}
+    end
+
+    if filepath_aggregator[bufname].chars == nil then
+        filepath_aggregator[bufname].chars = {}
+    end
+
+    increment_counter(filepath_aggregator.chars, char_typed)
+    increment_counter(filepath_aggregator, "keystrokes")
+    increment_counter(filepath_aggregator[bufname].chars, char_typed)
+    increment_counter(filepath_aggregator[bufname], "keystrokes")
 end
 
 return event_handler

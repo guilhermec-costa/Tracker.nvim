@@ -35,7 +35,7 @@ return {
     UIInteraction = {
         pattern = "*",
         desc = "When any UI interaction is made",
-        type = "UIEnter",
+        type = "FocusLost",
         group = events_group,
         handler = event_handlers.handle_ui_enter
     },
@@ -45,5 +45,19 @@ return {
         type = "InsertEnter",
         group = events_group,
         handler = event_handlers.handle_insert_enter
+    },
+    BufWrite = {
+        pattern = "*",
+        desc = "When saves a buffer",
+        type = "BufWrite",
+        group = events_group,
+        handler = event_handlers.handle_buf_write
+    },
+    InsertCharPre = {
+        pattern = "*",
+        desc = "Before inserting a character",
+        type = "InsertCharPre",
+        group = events_group,
+        handler = event_handlers.handle_insert_char_pre
     },
 }
