@@ -5,14 +5,15 @@ local utils = require "tracker.utils"
 
 ---@class AggregatorAPI
 ---@field Data table
----@field session table
+---@field Session table
 local AggregatorAPI = {}
 AggregatorAPI.__index = AggregatorAPI
 
 
----@return table
-function AggregatorAPI.new_aggregator()
+--[[ ---@return table ]]
+function AggregatorAPI.new_aggregator(session)
     local self = setmetatable({}, AggregatorAPI)
+    self.Session = session
     self.Data = {}
     self:initialize()
     return self
@@ -25,6 +26,7 @@ function AggregatorAPI:initialize()
             aggregator_path = agg.aggregator_path
         })
     end
+    self.Data.session_scoped.buffers.aggregators.counter = 0
 end
 
 ---@param opts New_Aggregator
@@ -44,8 +46,8 @@ function AggregatorAPI:add_aggregator(opts)
 
     local final_key = opts.aggregator_name or ""
     current_table[final_key] = {
-        counter = 0,
-        timer = 0
+        --[[ counter = 0,
+        timer = 0, ]]
     }
 end
 
@@ -120,6 +122,20 @@ function AggregatorAPI:overview_by_buffer()
             }
         end
     end
+
+    return output
+end
+
+function AggregatorAPI:session_overview()
+    local output = {}
+    local buffer_aggregator = self.Data.session_scoped.buffers.aggregators
+    output.keystrokes = buffer_aggregator.keystrokes
+    output.timer = self.Session.Session.runned_for
+    output.counter = buffer_aggregator.counter
+    output.yanked = buffer_aggregator.yanked
+    output.saved = buffer_aggregator.saved
+    output.cmd_mode = buffer_aggregator.cmd_mode
+    output.insert_enter = buffer_aggregator.insert_enter
 
     return output
 end

@@ -37,6 +37,7 @@ local tracker_commands = {
     TrackerBuffersCounter = { action = "lua P(require('tracker').Aggregator:counter_by_buffer())" },
     TrackerBuffersYanks = { action = "lua P(require('tracker').Aggregator:yanks_by_buffer())" },
     TrackerBuffersOverview = { action = "lua P(require('tracker').Aggregator:overview_by_buffer())" },
+    TrackerSessionOverview = { action = "lua P(require('tracker').Aggregator:session_overview())" },
 }
 
 

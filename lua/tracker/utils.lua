@@ -11,12 +11,6 @@ utils.generate_random_uuid = function()
     end)
 end
 
-utils.generate_session_id = function()
-    local current_timestamp = os.time()
-    local random_uuid = utils.generate_random_uuid()
-    return tostring(current_timestamp) .. '-' .. random_uuid
-end
-
 utils.split_string = function(inputstr, sep)
     if sep == nil then
         sep = "%s"
