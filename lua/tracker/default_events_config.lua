@@ -11,6 +11,13 @@ return {
         group = events_group,
         handler = event_handlers.handle_buf_enter
     },
+    --[[ OnEnterBufferV2 = {
+        pattern = "*",
+        desc = "When enters a buffer v2",
+        type = "BufEnter",
+        group = events_group,
+        handler = event_handlers.handle_buf_enter_v2
+    }, ]]
     OnYank = {
         pattern = "*",
         desc = "When text is yanked",
@@ -25,6 +32,13 @@ return {
         group = events_group,
         handler = event_handlers.handle_buf_leave
     },
+    --[[ LeaveBufferV2 = {
+        pattern = "*",
+        desc = "When leaves a buffer v2",
+        type = "BufLeave",
+        group = events_group,
+        handler = event_handlers.handle_buf_leaveV2
+    }, ]]
     CmdLineLeave = {
         pattern = "*",
         desc = "When leave cmd line mode",
