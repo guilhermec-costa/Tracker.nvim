@@ -16,6 +16,7 @@ end
 function Tracker:initialize(opts)
     local defaults = self:__generate_tracker_default_values()
     self.session_id = defaults.session_id
+    self.session_name = defaults.session_name
     self.events = events_configs
     self.event_debounce_time = opts.event_debounce_time
     self.is_running = true
@@ -30,10 +31,12 @@ end
 ---@return table<string, string>
 function Tracker:__generate_tracker_default_values()
     local tracker_start_timestamp = os.time()
-    local session_id = utils.generate_session_id();
+    local session_id = utils.generate_random_uuid();
+    local session_name = tostring(os.date("%Y_%m_%d_%H_%M_%S"))
     return {
         start_timestamp = tracker_start_timestamp,
-        session_id = session_id
+        session_id = session_id,
+        session_name = session_name
     }
 end
 

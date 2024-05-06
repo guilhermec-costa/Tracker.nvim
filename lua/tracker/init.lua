@@ -14,8 +14,7 @@ function Tracker.setup(opts)
         Tracker.Session:start_timer(opts.timer_debounce)
     end
 
-    -- dependency injection
-    Tracker.Aggregator = AggregatorAPI.new_aggregator()
+    Tracker.Aggregator = AggregatorAPI.new_aggregator(Tracker)
     --[[ Tracker.Storage = PersistencyAPI.create_storage() ]]
     local Event_Manager = EventsAPI.new(Tracker)
     Event_Manager:activate_events(Tracker.Session.events)
