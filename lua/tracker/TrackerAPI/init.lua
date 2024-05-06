@@ -1,6 +1,5 @@
 local utils = require "tracker.utils"
 local events_configs = require "tracker.default_events_config"
-local notify = require "notify"
 local notifier = require "tracker.TrackerAPI.Notifier"
 
 ---@class Tracker
@@ -52,7 +51,7 @@ end
 
 function Tracker:get_inactive_events()
     local inactive_events = {}
-    for event_name, event_metadata in pairs(self.events) do
+    for _, event_metadata in pairs(self.events) do
         if event_metadata.status == 0 then
             table.insert(inactive_events, event_metadata)
         end
@@ -66,7 +65,7 @@ function Tracker:start_timer(debounce)
     self.timer = timer
     if self.has_timer_started == false then
         self:notify("Tracker Timer has started")
-        timer:start(100, debounce, vim.schedule_wrap(function()
+        timer:start(700, debounce, vim.schedule_wrap(function()
             if self.is_running then
                 self.runned_for = self.runned_for + (debounce / 1000)
                 -- persist-frequency logic goes here
@@ -84,9 +83,8 @@ function Tracker:reset_timer()
         self.runned_for = 0
         self.has_timer_started = false
         self:start_timer()
-        self:notify("Tracker paused has been reset", "success")
     else
-        self:notify("Any target initialized yet", "error")
+        self:notify("Any timer initialized yet", "error")
     end
 end
 
@@ -97,14 +95,6 @@ end
 
 function Tracker:resume_timer()
     self.is_running = true
-end
-
-function Tracker:get_session_id()
-    return self.session_id
-end
-
-function Tracker:get_running_time()
-    return self.runned_for
 end
 
 function Tracker:notify(message, type)

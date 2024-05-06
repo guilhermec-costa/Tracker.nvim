@@ -10,7 +10,7 @@ local AggregatorAPI = {}
 AggregatorAPI.__index = AggregatorAPI
 
 
---[[ ---@return table ]]
+---@return table
 function AggregatorAPI.new_aggregator(session)
     local self = setmetatable({}, AggregatorAPI)
     self.Session = session
@@ -45,10 +45,7 @@ function AggregatorAPI:add_aggregator(opts)
     end
 
     local final_key = opts.aggregator_name or ""
-    current_table[final_key] = {
-        --[[ counter = 0,
-        timer = 0, ]]
-    }
+    current_table[final_key] = {}
 end
 
 function AggregatorAPI:remove_aggregator(aggregator_path)
@@ -106,6 +103,10 @@ end
 
 function AggregatorAPI:yanks_by_buffer()
     return self:__extract_information_from_buf("yanked")
+end
+
+function AggregatorAPI:saves_by_buffer()
+    return self:__extract_information_from_buf("saved")
 end
 
 function AggregatorAPI:overview_by_buffer()

@@ -31,7 +31,6 @@ end
 function Notifier:notify_info(message)
     self.notifier(message, "info", {
         title = self.default_notifier_title,
-        background = "#ff0000"
     })
 end
 

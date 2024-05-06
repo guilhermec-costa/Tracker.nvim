@@ -41,7 +41,7 @@ local tracker_commands = {
 }
 
 
-commands.trigger_tracker_commands = function(opts)
+commands.tracker_commands_telescope_ext = function(opts)
     opts = opts or {}
     local results = {}
     for cmd_name, _ in pairs(tracker_commands) do
@@ -66,9 +66,9 @@ end
 
 
 
-for cmd_name, action_opts in pairs(tracker_commands) do
-    local extra_opts = action_opts.opts or {}
-    vim.api.nvim_create_user_command(cmd_name, action_opts.action, extra_opts)
+for cmd_name, cmd_opts in pairs(tracker_commands) do
+    local extra_opts = cmd_opts.opts or {}
+    vim.api.nvim_create_user_command(cmd_name, cmd_opts.action, extra_opts)
 end
 
 return commands
