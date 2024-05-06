@@ -65,19 +65,63 @@ function AggregatorAPI:remove_aggregator(aggregator_path)
 end
 
 function AggregatorAPI:get_aggregators()
-    table.sort(self.Data)
     return self.Data
 end
 
 function AggregatorAPI:get_buffers()
-    local formmated_buffers = {}
+    local output = {}
     local filepath_aggregator = self.Data.session_scoped.buffers.aggregators.filepath
     for key, info in pairs(filepath_aggregator) do
         if key ~= "timer" and key ~= "counter" then
-            table.insert(formmated_buffers, info.metadata.name)
+            table.insert(output, info.metadata.name)
         end
     end
-    return formmated_buffers
+    return output
+end
+
+function AggregatorAPI:__extract_information_from_buf(aggregator_key)
+    local output = {}
+    local filepath_aggregator = self.Data.session_scoped.buffers.aggregators.filepath
+    for key, info in pairs(filepath_aggregator) do
+        if key ~= "timer" and key ~= "counter" then
+            output[info.metadata.name] = info[aggregator_key]
+        end
+    end
+    return output
+end
+
+function AggregatorAPI:keystrokes_by_buffer()
+    return self:__extract_information_from_buf("keystrokes")
+end
+
+function AggregatorAPI:time_by_buffer()
+    return self:__extract_information_from_buf("timer")
+end
+
+function AggregatorAPI:counter_by_buffer()
+    return self:__extract_information_from_buf("counter")
+end
+
+function AggregatorAPI:yanks_by_buffer()
+    return self:__extract_information_from_buf("yanked")
+end
+
+function AggregatorAPI:overview_by_buffer()
+    local output = {}
+    local filepath_aggregator = self.Data.session_scoped.buffers.aggregators.filepath
+    for key, info in pairs(filepath_aggregator) do
+        if key ~= "timer" and key ~= "counter" then
+            output[info.metadata.name] = {
+                timer = info.timer,
+                counter = info.counter,
+                keystrokes = info.keystrokes,
+                yanked = info.yanked,
+                saved = info.saved
+            }
+        end
+    end
+
+    return output
 end
 
 return AggregatorAPI

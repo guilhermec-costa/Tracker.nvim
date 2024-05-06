@@ -31,7 +31,12 @@ local tracker_commands = {
     TrackerGetSessionAggregators = { action = get_session_aggregators, opts = { nargs = "?" } },
     TrackerGetActiveEvents = { action = "lua P(require('tracker').Session:get_active_events())" },
     TrackerGetInactiveEvents = { action = "lua P(require('tracker').Session:get_inactive_events())" },
-    TrackerGetBuffers = { action = "lua P(require('tracker').Aggregator:get_buffers())" }
+    TrackerGetBuffers = { action = "lua P(require('tracker').Aggregator:get_buffers())" },
+    TrackerBuffersKeystrokes = { action = "lua P(require('tracker').Aggregator:keystrokes_by_buffer())" },
+    TrackerBuffersTime = { action = "lua P(require('tracker').Aggregator:time_by_buffer())" },
+    TrackerBuffersCounter = { action = "lua P(require('tracker').Aggregator:counter_by_buffer())" },
+    TrackerBuffersYanks = { action = "lua P(require('tracker').Aggregator:yanks_by_buffer())" },
+    TrackerBuffersOverview = { action = "lua P(require('tracker').Aggregator:overview_by_buffer())" },
 }
 
 
@@ -57,6 +62,7 @@ commands.trigger_tracker_commands = function(opts)
         end,
     }):find()
 end
+
 
 
 for cmd_name, action_opts in pairs(tracker_commands) do

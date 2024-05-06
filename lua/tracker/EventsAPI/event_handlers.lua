@@ -193,7 +193,6 @@ event_handler.handle_text_yank = function(data)
 end
 
 event_handler.handle_lost_focus = function(data)
-    print("herer")
     local bufname = vim.fn.expand("%")
     local bufext = vim.bo.filetype
 
