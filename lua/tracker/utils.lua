@@ -3,6 +3,7 @@
 local utils = {}
 local random = math.random
 
+---@return string, number
 utils.generate_random_uuid = function()
     local template = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
     return string.gsub(template, '[xy]', function(c)
@@ -11,6 +12,7 @@ utils.generate_random_uuid = function()
     end)
 end
 
+---@return string[]
 utils.split_string = function(inputstr, sep)
     if sep == nil then
         sep = "%s"

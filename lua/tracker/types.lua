@@ -5,7 +5,7 @@ types.tracker_defaults = {
     start_time = nil
 }
 
----@class Event_Type
+---@class event
 types.event = {
     desc = nil,
     type = nil,
@@ -19,4 +19,17 @@ types.new_aggregator = {
     aggregator_name = nil,
     aggregator_path = nil
 }
+
+---@class Session_overview
+types.Session_overview = {
+    keystrokes = nil,
+    timer = nil,
+    counter = nil,
+    yanked = nil,
+    saved = nil,
+    cmd_mode = nil,
+    insert_enter = nil,
+}
+
+
 return types

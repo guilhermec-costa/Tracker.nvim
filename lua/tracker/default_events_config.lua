@@ -3,6 +3,7 @@
 local events_group = vim.api.nvim_create_augroup("Events", { clear = true })
 local event_handlers = require "tracker.EventsAPI.event_handlers"
 
+---@return table<string, table<string, string>>
 return {
     OnEnterBuffer = {
         pattern = "*",
@@ -94,6 +95,13 @@ return {
         type = "ModeChanged",
         group = events_group,
         handler = event_handlers.handle_mode_change
+    },
+    VimEnter = {
+        pattern = "*",
+        desc = "After enter vim",
+        type = "VimEnter",
+        group = events_group,
+        handler = event_handlers.handle_vim_enter
     },
     --[[ ImBored = {
         pattern = "*",

@@ -6,6 +6,7 @@ local notifier = require "tracker.TrackerAPI.Notifier"
 local Tracker = {}
 Tracker.__index = Tracker
 
+---@return table
 function Tracker.new_session(opts)
     local self = setmetatable({}, Tracker)
     self:initialize(opts)
@@ -39,6 +40,7 @@ function Tracker:__generate_tracker_default_values()
     }
 end
 
+---@return table<string, table>
 function Tracker:get_active_events()
     local active_events = {}
     for event_name, event_metadata in pairs(self.events) do
@@ -49,6 +51,7 @@ function Tracker:get_active_events()
     return active_events
 end
 
+---@return table<string, table>
 function Tracker:get_inactive_events()
     local inactive_events = {}
     for _, event_metadata in pairs(self.events) do
@@ -97,6 +100,13 @@ function Tracker:resume_timer()
     self.is_running = true
 end
 
+---@alias notify_types
+---| "success" # a success notificationt type 
+---| "info" # a info notificationt type
+---| "error" # a error notificationt type
+---| nil
+
+---@param type notify_types
 function Tracker:notify(message, type)
     type = type or "success"
     if self.allow_notifications then

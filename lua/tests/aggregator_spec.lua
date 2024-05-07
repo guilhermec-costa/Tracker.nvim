@@ -7,7 +7,7 @@ describe("aggregatorAPI", function()
         require "tracker.AggregatorAPI"
     end)
 
-    it("can create a aggregator", function()
+    it("can create an aggregator", function()
         local agg = require("tracker.AggregatorAPI")
         local test_table = {}
         test_table.Aggregator = agg.new_aggregator(test_table)
@@ -19,7 +19,7 @@ describe("aggregatorAPI", function()
         assert.are.same({}, test_table.Aggregator.Data.session_scoped.buffers.aggregators.testing_aggregators.new_agg)
     end)
 
-    it("can remove aggregator", function()
+    it("can remove an aggregator", function()
         local agg = require("tracker.AggregatorAPI")
         local test_table = {}
         test_table.Aggregator = agg.new_aggregator(test_table)

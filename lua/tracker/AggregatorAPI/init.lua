@@ -91,6 +91,8 @@ function AggregatorAPI:get_buffers()
     return output
 end
 
+---@param aggregator_key string
+---@return table<string, number>
 function AggregatorAPI:__extract_information_from_buf(aggregator_key)
     local output = {}
     local filepath_aggregator = self.Data.session_scoped.buffers.aggregators.filepath
@@ -102,26 +104,32 @@ function AggregatorAPI:__extract_information_from_buf(aggregator_key)
     return output
 end
 
+---@return table<string, number>
 function AggregatorAPI:keystrokes_by_buffer()
     return self:__extract_information_from_buf("keystrokes")
 end
 
+---@return table<string, number>
 function AggregatorAPI:time_by_buffer()
     return self:__extract_information_from_buf("timer")
 end
 
+---@return table<string, number>
 function AggregatorAPI:counter_by_buffer()
     return self:__extract_information_from_buf("counter")
 end
 
+---@return table<string, number>
 function AggregatorAPI:yanks_by_buffer()
     return self:__extract_information_from_buf("yanked")
 end
 
+---@return table<string, number>
 function AggregatorAPI:saves_by_buffer()
     return self:__extract_information_from_buf("saved")
 end
 
+---@return table<string, table<string, number>>
 function AggregatorAPI:overview_by_buffer()
     local output = {}
     local filepath_aggregator = self.Data.session_scoped.buffers.aggregators.filepath
@@ -132,7 +140,9 @@ function AggregatorAPI:overview_by_buffer()
                 counter = info.counter,
                 keystrokes = info.keystrokes,
                 yanked = info.yanked,
-                saved = info.saved
+                saved = info.saved,
+                cmd_mode = info.cmd_mode,
+                insert_mode = info.insert_mode
             }
         end
     end
@@ -140,8 +150,11 @@ function AggregatorAPI:overview_by_buffer()
     return output
 end
 
+---@return Session_overview
 function AggregatorAPI:session_overview()
+    ---@class Session_overview
     local output = {}
+
     local buffer_aggregator = self.Data.session_scoped.buffers.aggregators
     output.keystrokes = buffer_aggregator.keystrokes
     output.timer = self.Session.Session.runned_for

@@ -23,6 +23,7 @@ local function get_session_aggregators(opts)
     end
 end
 
+---@type table<string, table<string, string>>
 local tracker_commands = {
     TrackerPauseTimer = { action = "lua require('tracker').Session:pause_timer()" },
     TrackerStartTimer = { action = "lua require('tracker').Session:start_timer()" },

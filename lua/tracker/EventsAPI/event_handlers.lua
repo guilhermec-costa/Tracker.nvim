@@ -10,21 +10,25 @@ local function increment_key_by_aggregator(aggregator, key, start_value)
     end
 end
 
+---@return nil
 event_handler.handle_buf_enter = function(data)
     local bufname = vim.fn.expand("%")
     local bufext = vim.bo.filetype
     local bufnr = vim.api.nvim_get_current_buf()
 
-    local buffer_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators
-    local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
-    local filetype_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filetype
+    ---@type AggregatorAPI
+    local Aggregator = data.Aggregator
+
+    local buffer_aggregator = Aggregator.Data.session_scoped.buffers.aggregators
+    local filepath_aggregator = Aggregator.Data.session_scoped.buffers.aggregators.filepath
+    local filetype_aggregator = Aggregator.Data.session_scoped.buffers.aggregators.filetype
 
     if bufname == "" or bufname == "." then
         return
     end
 
     if filepath_aggregator[bufname] == nil then
-        data.Aggregator:add_aggregator({
+        Aggregator:add_aggregator({
             aggregator_name = bufname,
             aggregator_path = "session_scoped.buffers.aggregators.filepath"
         })
@@ -44,7 +48,7 @@ event_handler.handle_buf_enter = function(data)
             return
         end
 
-        data.Aggregator:add_aggregator({
+        Aggregator:add_aggregator({
             aggregator_name = bufext,
             aggregator_path = "session_scoped.buffers.aggregators.filetype"
         })
@@ -65,6 +69,7 @@ event_handler.handle_buf_enter = function(data)
     end))
 end
 
+---@return nil
 event_handler.handle_buf_leave = function(data)
     local bufname = vim.fn.expand("%")
     local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
@@ -82,6 +87,7 @@ event_handler.handle_buf_leave = function(data)
     filepath_aggregator.timer = filepath_aggregator.timer + filepath_aggregator[bufname].timer
 end
 
+---@return nil
 event_handler.handle_text_yank = function(data)
     local bufname = vim.fn.expand("%")
     local bufext = vim.bo.filetype
@@ -95,6 +101,7 @@ event_handler.handle_text_yank = function(data)
     increment_key_by_aggregator(filepath_aggregator[bufname], "yanked")
 end
 
+---@return nil
 event_handler.handle_lost_focus = function(data)
     local bufname = vim.fn.expand("%")
     local bufext = vim.bo.filetype
@@ -108,6 +115,7 @@ event_handler.handle_lost_focus = function(data)
     increment_key_by_aggregator(filepath_aggregator[bufname], "lost_focus")
 end
 
+---@return nil
 event_handler.handle_cmdline_leave = function(data)
     local bufname = vim.fn.expand("%")
     local bufext = vim.bo.filetype
@@ -122,6 +130,7 @@ event_handler.handle_cmdline_leave = function(data)
 end
 
 
+---@return nil
 event_handler.handle_insert_enter = function(data)
     local bufname = vim.fn.expand("%")
     local bufext = vim.bo.filetype
@@ -135,6 +144,7 @@ event_handler.handle_insert_enter = function(data)
     increment_key_by_aggregator(filepath_aggregator[bufname], "insert_mode")
 end
 
+---@return nil
 event_handler.handle_insert_leave = function(data)
     local bufname = vim.fn.expand("%")
     local bufext = vim.bo.filetype
@@ -148,6 +158,7 @@ event_handler.handle_insert_leave = function(data)
     increment_key_by_aggregator(filepath_aggregator[bufname], "normal")
 end
 
+---@return nil
 event_handler.handle_buf_write = function(data)
     local bufname = vim.fn.expand("%")
     local bufext = vim.bo.filetype
@@ -162,6 +173,7 @@ event_handler.handle_buf_write = function(data)
     increment_key_by_aggregator(filepath_aggregator[bufname], "saved")
 end
 
+---@return nil
 event_handler.handle_insert_char_pre = function(data)
     local bufname = vim.fn.expand("%")
     local bufext = vim.bo.filetype
@@ -192,6 +204,7 @@ event_handler.handle_insert_char_pre = function(data)
     increment_key_by_aggregator(filetype_aggregator[bufext], "keystrokes")
 end
 
+---@return nil
 event_handler.handle_buf_add = function(data)
     local bufext = vim.bo.filetype
     local buffer_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators
@@ -212,6 +225,7 @@ event_handler.handle_buf_add = function(data)
     increment_key_by_aggregator(filetype_aggregator[bufext], "buffers_added")
 end
 
+---@return nil
 event_handler.handle_buf_delete = function(data)
     local bufext = vim.bo.filetype
 
@@ -236,6 +250,7 @@ end
 event_handler.handle_dir_changed = function(data)
 end
 
+---@return nil
 event_handler.handle_recorded_macro = function(data)
     local bufname = vim.fn.expand("%")
     local bufext = vim.bo.filetype
@@ -249,6 +264,8 @@ event_handler.handle_recorded_macro = function(data)
     increment_key_by_aggregator(filetype_aggregator[bufext], "recorded_macros")
 end
 
+---@return nil
+---@type function(data: table)
 event_handler.handle_mode_change = function(data)
     local bufname = vim.fn.expand("%")
     local bufext = vim.bo.filetype
@@ -264,6 +281,14 @@ end
 
 event_handler.handle_bored_user = function(data)
     print("How have you even got here?")
+end
+
+event_handler.handle_vim_enter = function(data)
+    local bufname = vim.fn.expand("%")
+    data.Aggregator.add:add_aggregator({
+        aggregator_name = 'Teste',
+        aggregator_path = "session_scoped.buffers.aggregators.project"
+    })
 end
 
 return event_handler
