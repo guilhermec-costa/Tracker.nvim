@@ -51,15 +51,28 @@ end
 function AggregatorAPI:remove_aggregator(aggregator_path)
     local splitted_paths = utils.split_string(aggregator_path, ".")
     local current_table = self.Data
+
     for i = 1, #splitted_paths - 1 do
         local key = splitted_paths[i]
-        current_table[key] = current_table[key] or {}
+        current_table[key] = current_table[key] or nil
+
+        if current_table[key] == nil then
+            print("key \"" .. key .. "\" does not exist")
+            return 0
+        end
+
         current_table = current_table[key]
     end
 
     local final_key = splitted_paths[#splitted_paths] or nil
+    if current_table[final_key] == nil then
+        print("final key \"" .. final_key .. "\" does not exist")
+        return 0
+    end
+
     if final_key then
         current_table[final_key] = nil
+        return 1
     end
 end
 
