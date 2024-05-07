@@ -1,6 +1,9 @@
 ---@module "event_handler"
 local event_handler = {}
 
+---@param aggregator table 
+---@param key string
+---@param start_value integer 
 local function increment_key_by_aggregator(aggregator, key, start_value)
     start_value = start_value or 1
     if aggregator[key] == nil then
@@ -10,6 +13,7 @@ local function increment_key_by_aggregator(aggregator, key, start_value)
     end
 end
 
+---@param data Tracker
 ---@return nil
 event_handler.handle_buf_enter = function(data)
     local bufname = vim.fn.expand("%")

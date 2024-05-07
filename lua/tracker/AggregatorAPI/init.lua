@@ -1,5 +1,4 @@
 local default_aggregators_config = require "tracker.AggregatorAPI.default_aggregators"
-local types = require "tracker.types"
 local utils = require "tracker.utils"
 
 
@@ -9,8 +8,6 @@ local utils = require "tracker.utils"
 local AggregatorAPI = {}
 AggregatorAPI.__index = AggregatorAPI
 
-
----@return table
 function AggregatorAPI.new_aggregator(session)
     local self = setmetatable({}, AggregatorAPI)
     self.Session = session
@@ -30,6 +27,7 @@ function AggregatorAPI:initialize()
 end
 
 ---@param opts New_Aggregator
+---@return nil
 function AggregatorAPI:add_aggregator(opts)
     if string.find(opts.aggregator_path, "/tmp", 0) then
         return
@@ -48,6 +46,8 @@ function AggregatorAPI:add_aggregator(opts)
     current_table[final_key] = {}
 end
 
+---@alias return_codes 1 | 0
+---@return return_codes
 function AggregatorAPI:remove_aggregator(aggregator_path)
     local splitted_paths = utils.split_string(aggregator_path, ".")
     local current_table = self.Data
@@ -70,10 +70,12 @@ function AggregatorAPI:remove_aggregator(aggregator_path)
         return 0
     end
 
-    if final_key then
-        current_table[final_key] = nil
-        return 1
+    if not final_key then
+        return 0
     end
+
+    current_table[final_key] = nil
+    return 1
 end
 
 function AggregatorAPI:get_aggregators()

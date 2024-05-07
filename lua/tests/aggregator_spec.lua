@@ -29,8 +29,7 @@ describe("aggregatorAPI", function()
         })
 
         local result_code = test_table.Aggregator:remove_aggregator(
-            "session_scoped.buffers.aggregators.testing_aggregators.new_agg",
-            test_table)
+            "session_scoped.buffers.aggregators.testing_aggregators.new_agg")
 
         assert.are.same(1, result_code)
     end)

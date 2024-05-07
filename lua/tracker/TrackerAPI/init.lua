@@ -2,18 +2,27 @@ local utils = require "tracker.utils"
 local events_configs = require "tracker.default_events_config"
 local notifier = require "tracker.TrackerAPI.Notifier"
 
----@class Tracker
-local Tracker = {}
-Tracker.__index = Tracker
+---@class TrackerAPI
+---@field session_id string
+---@field session_name string
+---@field events table<string, table>
+---@field event_debounce_time number
+---@field is_running boolean
+---@field runned_for number
+---@field has_timer_started boolean
+---@field allow_notifications boolean
+---@field Notifier table
+local TrackerAPI = {}
+TrackerAPI.__index = TrackerAPI
 
----@return table
-function Tracker.new_session(opts)
-    local self = setmetatable({}, Tracker)
+---@return TrackerAPI
+function TrackerAPI.new_session(opts)
+    local self = setmetatable({}, TrackerAPI)
     self:initialize(opts)
     return self
 end
 
-function Tracker:initialize(opts)
+function TrackerAPI:initialize(opts)
     local defaults = self:__generate_tracker_default_values()
     self.session_id = defaults.session_id
     self.session_name = defaults.session_name
@@ -26,10 +35,13 @@ function Tracker:initialize(opts)
     self.Notifier = notifier.new({
         title = "Tracker",
     })
+
+    if opts.start_timer_on_launch then
+        self:start_timer(opts.timer_debounce)
+    end
 end
 
----@return table<string, string>
-function Tracker:__generate_tracker_default_values()
+function TrackerAPI:__generate_tracker_default_values()
     local tracker_start_timestamp = os.time()
     local session_id = utils.generate_random_uuid();
     local session_name = tostring(os.date("%Y_%m_%d_%H_%M_%S"))
@@ -41,7 +53,7 @@ function Tracker:__generate_tracker_default_values()
 end
 
 ---@return table<string, table>
-function Tracker:get_active_events()
+function TrackerAPI:get_active_events()
     local active_events = {}
     for event_name, event_metadata in pairs(self.events) do
         if event_metadata.status == 1 then
@@ -51,8 +63,7 @@ function Tracker:get_active_events()
     return active_events
 end
 
----@return table<string, table>
-function Tracker:get_inactive_events()
+function TrackerAPI:get_inactive_events()
     local inactive_events = {}
     for _, event_metadata in pairs(self.events) do
         if event_metadata.status == 0 then
@@ -62,7 +73,8 @@ function Tracker:get_inactive_events()
     return inactive_events
 end
 
-function Tracker:start_timer(debounce)
+---@param debounce number|nil
+function TrackerAPI:start_timer(debounce)
     debounce = debounce or 5000
     local timer = vim.loop.new_timer()
     self.timer = timer
@@ -80,7 +92,7 @@ function Tracker:start_timer(debounce)
     end
 end
 
-function Tracker:reset_timer()
+function TrackerAPI:reset_timer()
     if self.timer then
         self.timer:close()
         self.runned_for = 0
@@ -91,23 +103,23 @@ function Tracker:reset_timer()
     end
 end
 
-function Tracker:pause_timer()
+function TrackerAPI:pause_timer()
     self.is_running = false
     self:notify("Tracker timer has been paused", "info")
 end
 
-function Tracker:resume_timer()
+function TrackerAPI:resume_timer()
     self.is_running = true
 end
 
 ---@alias notify_types
----| "success" # a success notificationt type 
----| "info" # a info notificationt type
----| "error" # a error notificationt type
+---| "success" # a success notificationt type
+---| "info" # an info notificationt type
+---| "error" # an error notificationt type
 ---| nil
 
 ---@param type notify_types
-function Tracker:notify(message, type)
+function TrackerAPI:notify(message, type)
     type = type or "success"
     if self.allow_notifications then
         if type == "info" then
@@ -122,4 +134,4 @@ function Tracker:notify(message, type)
     end
 end
 
-return Tracker
+return TrackerAPI

@@ -1,22 +1,21 @@
 local types = require "tracker.types"
 
 ---@class Event_Manager
+---@field corresponding_session
 local Event_Manager = {}
 Event_Manager.__index = Event_Manager
 
-
----@param opts table
----@return table
-function Event_Manager.new(opts)
+---@param tracker_session Tracker
+---@return Event_Manager
+function Event_Manager.new(tracker_session)
     local self = setmetatable({}, Event_Manager)
-    self:initialize(opts)
+    self:initialize(tracker_session)
     return self
 end
 
----@param opts table
----@return nil
-function Event_Manager:initialize(opts)
-    self.corresponding_session = opts
+---@param tracker_session Tracker
+function Event_Manager:initialize(tracker_session)
+    self.corresponding_session = tracker_session
 end
 
 ---@param _events table

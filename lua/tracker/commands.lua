@@ -11,19 +11,18 @@ local function get_session_aggregators(opts)
     local splitted_paths = utils.split_string(args, " ")
     if #splitted_paths > 0 then
         local accessors_path_string = ""
-        for i, arg in ipairs(splitted_paths) do
+        for i, _ in ipairs(splitted_paths) do
             accessors_path_string = accessors_path_string .. "['" .. splitted_paths[i] .. "']"
         end
         local command = "lua P(require('tracker').Aggregator:get_aggregators().session_scoped.buffers.aggregators" ..
             accessors_path_string .. ")"
-        local cmd_status, _ = pcall(vim.api.nvim_command, command)
+        pcall(vim.api.nvim_command, command)
     else
         local command = "lua P(require('tracker').Aggregator:get_aggregators().session_scoped.buffers.aggregators)"
-        local cmd_status, _ = pcall(vim.api.nvim_command, command)
+        pcall(vim.api.nvim_command, command)
     end
 end
 
----@type table<string, table<string, string>>
 local tracker_commands = {
     TrackerPauseTimer = { action = "lua require('tracker').Session:pause_timer()" },
     TrackerStartTimer = { action = "lua require('tracker').Session:start_timer()" },
