@@ -17,7 +17,7 @@ end
 ---@return nil
 event_handler.handle_buf_enter = function(data)
     local bufname = vim.fn.expand("%")
-    local bufext = vim.bo.filetype
+    local bufext = vim.fn.expand("%:e")
     local bufnr = vim.api.nvim_get_current_buf()
 
     local project_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.project
@@ -94,7 +94,7 @@ end
 ---@return nil
 event_handler.handle_text_yank = function(data)
     local bufname = vim.fn.expand("%")
-    local bufext = vim.bo.filetype
+    local bufext = vim.fn.expand("%:e")
 
     local project_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.project
     local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
@@ -109,7 +109,7 @@ end
 ---@return nil
 event_handler.handle_lost_focus = function(data)
     local bufname = vim.fn.expand("%")
-    local bufext = vim.bo.filetype
+    local bufext = vim.fn.expand("%:e")
 
     local project_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.project
     local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
@@ -124,7 +124,7 @@ end
 ---@return nil
 event_handler.handle_cmdline_leave = function(data)
     local bufname = vim.fn.expand("%")
-    local bufext = vim.bo.filetype
+    local bufext = vim.fn.expand("%:e")
 
     local project_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.project
     local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
@@ -140,7 +140,7 @@ end
 ---@return nil
 event_handler.handle_insert_enter = function(data)
     local bufname = vim.fn.expand("%")
-    local bufext = vim.bo.filetype
+    local bufext = vim.fn.expand("%:e")
 
     local project_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.project
     local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
@@ -155,7 +155,7 @@ end
 ---@return nil
 event_handler.handle_insert_leave = function(data)
     local bufname = vim.fn.expand("%")
-    local bufext = vim.bo.filetype
+    local bufext = vim.fn.expand("%:e")
 
     local project_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.project
     local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
@@ -170,7 +170,7 @@ end
 ---@return nil
 event_handler.handle_buf_write = function(data)
     local bufname = vim.fn.expand("%")
-    local bufext = vim.bo.filetype
+    local bufext = vim.fn.expand("%:e")
 
 
     local project_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.project
@@ -186,7 +186,7 @@ end
 ---@return nil
 event_handler.handle_insert_char_pre = function(data)
     local bufname = vim.fn.expand("%")
-    local bufext = vim.bo.filetype
+    local bufext = vim.fn.expand("%:e")
     local char_typed = vim.v.char
 
     local project_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.project
@@ -222,7 +222,7 @@ end
 ---@param data Tracker
 ---@return nil
 event_handler.handle_buf_add = function(data)
-    local bufext = vim.bo.filetype
+    local bufext = vim.fn.expand("%:e")
     local project_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.project
     local filetype_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filetype
 
@@ -244,7 +244,7 @@ end
 ---@param data Tracker
 ---@return nil
 event_handler.handle_buf_delete = function(data)
-    local bufext = vim.bo.filetype
+    local bufext = vim.fn.expand("%:e")
 
     local project_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.project
     local filetype_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filetype
@@ -272,7 +272,7 @@ end
 ---@return nil
 event_handler.handle_recorded_macro = function(data)
     local bufname = vim.fn.expand("%")
-    local bufext = vim.bo.filetype
+    local bufext = vim.fn.expand("%:e")
 
     local project_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.project
     local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
@@ -287,7 +287,7 @@ end
 ---@return nil
 event_handler.handle_mode_change = function(data)
     local bufname = vim.fn.expand("%")
-    local bufext = vim.bo.filetype
+    local bufext = vim.fn.expand("%:e")
 
     local project_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.project
     local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
@@ -310,7 +310,6 @@ event_handler.handle_vim_enter = function(data)
         aggregator_name = current_directory,
         aggregator_path = "session_scoped.buffers.aggregators.project"
     })
-    print(vim.cmd("pwd"))
 end
 
 return event_handler
