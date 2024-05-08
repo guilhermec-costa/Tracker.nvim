@@ -1,7 +1,6 @@
 local default_aggregators_config = require "tracker.AggregatorAPI.default_aggregators"
 local utils = require "tracker.utils"
 
-
 ---@class AggregatorAPI
 ---@field Data table
 ---@field Session table
@@ -23,13 +22,12 @@ function AggregatorAPI:initialize()
             aggregator_path = agg.aggregator_path
         })
     end
-    self.Data.session_scoped.buffers.aggregators.counter = 0
+    self.Data.session_scoped.buffers.aggregators.project.counter = 0
 end
 
 ---@param opts New_Aggregator
----@return nil
 function AggregatorAPI:add_aggregator(opts)
-    if string.find(opts.aggregator_path, "/tmp", 0) then
+    if string.find(opts.aggregator_path, "/tmp") then
         return
     end
 

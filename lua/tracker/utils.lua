@@ -12,7 +12,6 @@ utils.generate_random_uuid = function()
     end)
 end
 
----@return string[]
 utils.split_string = function(inputstr, sep)
     if sep == nil then
         sep = "%s"

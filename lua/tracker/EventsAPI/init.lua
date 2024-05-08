@@ -1,7 +1,5 @@
-local types = require "tracker.types"
-
 ---@class Event_Manager
----@field corresponding_session
+---@field corresponding_session Tracker
 local Event_Manager = {}
 Event_Manager.__index = Event_Manager
 
