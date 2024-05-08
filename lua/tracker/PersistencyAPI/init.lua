@@ -32,7 +32,7 @@ function PersistencyAPI:create_persistence_folder()
 end
 
 function PersistencyAPI:save_session_data()
-    local buffers_overview = self.session.Aggregator:overview_by_buffer()
+    local buffers_overview = self.session.Aggregator:prepare_data_for_json_file()
     local stringified_agg = json.encode(buffers_overview)
     local file = io.open("data.json", "w") -- various modes
     if file then

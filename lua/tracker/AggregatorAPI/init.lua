@@ -133,37 +133,65 @@ end
 function AggregatorAPI:overview_by_buffer()
     local output = {}
     local filepath_aggregator = self.Data.session_scoped.buffers.aggregators.filepath
-    for key, info in pairs(filepath_aggregator) do
-        if key ~= "timer" and key ~= "counter" then
-            output[info.metadata.name] = {
-                timer = info.timer,
-                counter = info.counter,
-                keystrokes = info.keystrokes,
-                yanked = info.yanked,
-                saved = info.saved,
-                cmd_mode = info.cmd_mode,
-                insert_mode = info.insert_mode,
-                chars = info.chars
-            }
-        end
+    for _, buffer in pairs(filepath_aggregator) do
+        output[buffer.metadata.name] = {
+            timer = buffer.timer,
+            counter = buffer.counter,
+            keystrokes = buffer.keystrokes,
+            yanked = buffer.yanked,
+            saved = buffer.saved,
+            cmd_mode = buffer.cmd_mode,
+            insert_mode = buffer.insert_mode,
+            chars = buffer.chars
+        }
+    end
+
+    return output
+end
+
+---@return table<string, table<string, number>>
+function AggregatorAPI:overview_by_filetype()
+    local output = {}
+    local filetype_aggregator = self.Data.session_scoped.buffers.aggregators.filetype
+    for filetype, values in pairs(filetype_aggregator) do
+        output[filetype] = {
+            timer = values.timer,
+            counter = values.counter,
+            keystrokes = values.keystrokes,
+            yanked = values.yanked,
+            saved = values.saved,
+            cmd_mode = values.cmd_mode,
+            insert_mode = values.insert_mode,
+            chars = values.chars
+        }
     end
 
     return output
 end
 
 ---@return Session_overview
-function AggregatorAPI:session_overview()
+function AggregatorAPI:project_overview()
     ---@class Session_overview
     local output = {}
 
-    local buffer_aggregator = self.Data.session_scoped.buffers.aggregators
-    output.keystrokes = buffer_aggregator.keystrokes
+    local project_aggregator = self.Data.session_scoped.buffers.aggregators.project
+    output.keystrokes = project_aggregator.keystrokes
     output.timer = self.Session.Session.runned_for
-    output.counter = buffer_aggregator.counter
-    output.yanked = buffer_aggregator.yanked
-    output.saved = buffer_aggregator.saved
-    output.cmd_mode = buffer_aggregator.cmd_mode
-    output.insert_enter = buffer_aggregator.insert_enter
+    output.counter = project_aggregator.counter
+    output.yanked = project_aggregator.yanked
+    output.saved = project_aggregator.saved
+    output.cmd_mode = project_aggregator.cmd_mode
+    output.insert_enter = project_aggregator.insert_enter
+
+    return output
+end
+
+function AggregatorAPI:prepare_data_for_json_file()
+    local output = {}
+
+    output["project"] = self:project_overview()
+    output["filepath"] = self:overview_by_buffer()
+    output["filetype"] = self:overview_by_filetype()
 
     return output
 end
