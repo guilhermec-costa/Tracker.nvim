@@ -15,7 +15,7 @@ function Tracker.setup(opts)
     Tracker.Session = TrackerAPI.new_session(opts)
 
     ---@type PersistencyAPI
-    Tracker.Persistence = PersistenceAPI:create_storage()
+    Tracker.Persistence = PersistenceAPI.create_storage(Tracker)
 
     ---@type AggregatorAPI
     Tracker.Aggregator = AggregatorAPI.new_aggregator(Tracker)

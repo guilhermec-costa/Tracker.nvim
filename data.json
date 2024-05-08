@@ -1,0 +1,50 @@
+{
+    "lua/tracker/commands.lua": {
+        "timer": 0,
+        "counter": 4
+    },
+    "lua/tracker/init.lua": {
+        "chars": {
+            "w": 2,
+            "h": 4,
+            "n": 2,
+            "q": 9,
+            "r": 8,
+            "k": 1,
+            "e": 2,
+            "b": 2
+        },
+        "yanked": 1,
+        "insert_mode": 1,
+        "timer": 15,
+        "counter": 5,
+        "keystrokes": 30
+    },
+    "lua/tracker/PersistencyAPI/init.lua": {
+        "timer": 0,
+        "counter": 2
+    },
+    "scripts/init_persistence_process.sh": {
+        "timer": 3,
+        "counter": 1
+    },
+    "lua/tracker/AggregatorAPI/default_aggregators.lua": {
+        "chars": {
+            "w": 4,
+            "q": 7,
+            "e": 3,
+            "u": 1,
+            "k": 1,
+            "i": 1,
+            "r": 6,
+            "h": 2,
+            "b": 3
+        },
+        "yanked": 1,
+        "insert_mode": 1,
+        "timer": 30,
+        "counter": 2,
+        "cmd_mode": 1,
+        "keystrokes": 28
+    }
+}

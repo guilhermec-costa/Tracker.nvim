@@ -142,7 +142,8 @@ function AggregatorAPI:overview_by_buffer()
                 yanked = info.yanked,
                 saved = info.saved,
                 cmd_mode = info.cmd_mode,
-                insert_mode = info.insert_mode
+                insert_mode = info.insert_mode,
+                chars = info.chars
             }
         end
     end
