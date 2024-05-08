@@ -3,10 +3,11 @@ local utils = require "tracker.utils"
 
 ---@class AggregatorAPI
 ---@field Data table
----@field Session table
+---@field Session Tracker 
 local AggregatorAPI = {}
 AggregatorAPI.__index = AggregatorAPI
 
+---@param session Tracker
 function AggregatorAPI.new_aggregator(session)
     local self = setmetatable({}, AggregatorAPI)
     self.Session = session
@@ -169,6 +170,7 @@ function AggregatorAPI:overview_by_filetype()
     return output
 end
 
+---  Get every data related to the project scope. It englobes both buffer and filetype scopes
 ---@return Session_overview
 function AggregatorAPI:project_overview()
     ---@class Session_overview
@@ -189,6 +191,9 @@ end
 function AggregatorAPI:prepare_data_for_json_file()
     local output = {}
 
+    output.session_id = self.Session.Session.session_id
+    output.session_name = self.Session.Session.session_name
+    output.session_duration = self.Session.Session.runned_for
     output["project"] = self:project_overview()
     output["filepath"] = self:overview_by_buffer()
     output["filetype"] = self:overview_by_filetype()
