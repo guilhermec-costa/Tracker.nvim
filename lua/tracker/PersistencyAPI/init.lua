@@ -1,20 +1,27 @@
-local default_aggregators_config = require "tracker.AggregatorAPI.default_aggregators"
-local types = require "tracker.types"
-local utils = require "tracker.utils"
-
-
 ---@class PersistencyAPI
 local PersistencyAPI = {}
 PersistencyAPI.__index = PersistencyAPI
 
 
----@return table
-function PersistencyAPI.create_storage()
+---@param opts table
+---@return PersistencyAPI
+function PersistencyAPI.create_storage(opts)
     local self = setmetatable({}, PersistencyAPI)
-    self:initialize()
+    self:initialize(opts)
     return self
 end
 
-function PersistencyAPI:initialize()
+function PersistencyAPI:initialize(opts)
+    self.persistence_location = opts.persistence_location or os.getenv("HOME") .. "/.config/tracker"
+    self:create_persistence_folder()
 end
 
+function PersistencyAPI:create_persistence_folder()
+    local dir_exists = os.execute('[ -d "' .. self.persistence_location .. '" ]')
+    if dir_exists ~= 0 then
+        os.execute("mkdir " .. self.persistence_location)
+        os.execute("mkdir " .. self.persistence_location .. "/data")
+    end
+end
+
+return PersistencyAPI

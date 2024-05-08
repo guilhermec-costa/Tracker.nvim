@@ -1,6 +1,7 @@
 local TrackerAPI = require "tracker.TrackerAPI"
 local EventsAPI = require "tracker.EventsAPI"
 local AggregatorAPI = require "tracker.AggregatorAPI"
+local PersistenceAPI = require "tracker.PersistencyAPI"
 
 require "tracker.commands"
 
@@ -12,6 +13,9 @@ function Tracker.setup(opts)
 
     ---@type TrackerAPI
     Tracker.Session = TrackerAPI.new_session(opts)
+
+    ---@type PersistencyAPI
+    Tracker.Persistence = PersistenceAPI:create_storage()
 
     ---@type AggregatorAPI
     Tracker.Aggregator = AggregatorAPI.new_aggregator(Tracker)

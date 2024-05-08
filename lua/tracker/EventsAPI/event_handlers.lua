@@ -312,4 +312,16 @@ event_handler.handle_vim_enter = function(data)
     })
 end
 
+event_handler.handle_search_wrapper = function(data)
+    local bufname = vim.fn.expand("%")
+    local bufext = vim.fn.expand("%:e")
+
+    local project_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.project
+    local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
+    local filetype_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filetype
+    increment_key_by_aggregator(filepath_aggregator[bufname], "search_wrapper")
+    increment_key_by_aggregator(filetype_aggregator[bufext], "search_wrapper")
+    increment_key_by_aggregator(project_aggregator, "search_wrapper")
+end
+
 return event_handler

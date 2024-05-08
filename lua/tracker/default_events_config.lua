@@ -96,6 +96,13 @@ return {
         group = events_group,
         handler = event_handlers.handle_mode_change
     },
+    SearchWrapped = {
+        pattern = "*",
+        desc = "After make a search",
+        type = "SearchWrapped",
+        group = events_group,
+        handler = event_handlers.handle_search_wrapper
+    },
     VimEnter = {
         pattern = "*",
         desc = "After enter vim",
