@@ -20,24 +20,22 @@ end
 function PersistencyAPI:initialize(opts)
     opts = opts or {}
     self.persistence_location = opts.persistence_location or os.getenv("HOME") .. "/.config/tracker"
+    self.cleanup_session_files_frequency = opts.cleanup_session_files_frequency or 7
     self:create_persistence_folder()
 end
 
 function PersistencyAPI:create_persistence_folder()
     local dir_exists = os.execute('[ -d "' .. self.persistence_location .. '" ]')
-    if dir_exists == 0 then
-        print("Persistence location already exists")
-        return
+    if dir_exists ~= 0 then
+        os.execute("mkdir " .. self.persistence_location)
+        os.execute("mkdir " .. self.persistence_location .. "/data")
     end
-
-    os.execute("mkdir " .. self.persistence_location)
-    os.execute("mkdir " .. self.persistence_location .. "/data")
 end
 
 function PersistencyAPI:save_session_data_to_json_file()
     local buffers_overview = self.session.Aggregator:prepare_data_for_json_file()
     local stringified_agg = json.encode(buffers_overview)
-    local file = io.open(self.persistence_location .. "/data/" .. self.session.Session.session_name .. ".json", "w") -- various modes
+    local file = io.open(self.persistence_location .. "/data/" .. self.session.Session.session_name .. ".json", "w")
     if file then
         file:write(stringified_agg)
         return file:read()
@@ -52,6 +50,9 @@ function PersistencyAPI:remove_session_file(filepath)
     end
 
     pcall(os.execute, "rm " .. filepath)
+end
+
+function PersistencyAPI:schedule_session_file_deletion()
 end
 
 return PersistencyAPI

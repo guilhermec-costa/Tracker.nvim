@@ -4,6 +4,7 @@ local notifier = require "tracker.TrackerAPI.Notifier"
 
 ---@class TrackerAPI
 ---@field session_id string
+---@field persistor PersistencyAPI
 ---@field session_name string
 ---@field events table<string, table>
 ---@field event_debounce_time number
@@ -35,10 +36,7 @@ function TrackerAPI:initialize(opts)
     self.Notifier = notifier.new({
         title = "Tracker",
     })
-
-    if opts.start_timer_on_launch then
-        self:start_timer(opts.timer_debounce)
-    end
+    self:start_timer(opts.timer_debounce)
 end
 
 function TrackerAPI:__generate_tracker_default_values()
@@ -83,6 +81,9 @@ function TrackerAPI:start_timer(debounce)
         timer:start(700, debounce, vim.schedule_wrap(function()
             if self.is_running then
                 self.runned_for = self.runned_for + (debounce / 1000)
+                if self.runned_for > 40 then
+                    self.persistor:save_session_data_to_json_file()
+                end
                 -- persist-frequency logic goes here
             end
         end))

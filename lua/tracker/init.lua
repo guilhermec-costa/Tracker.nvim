@@ -14,11 +14,11 @@ function Tracker.setup(opts)
     ---@type TrackerAPI
     Tracker.Session = TrackerAPI.new_session(opts)
 
-    ---@type PersistencyAPI
-    Tracker.Persistence = PersistenceAPI.create_storage(Tracker)
-
     ---@type AggregatorAPI
     Tracker.Aggregator = AggregatorAPI.new_aggregator(Tracker)
+
+    ---@type PersistencyAPI
+    Tracker.Session.persistor = PersistenceAPI.create_storage(Tracker)
 
     local Event_Manager = EventsAPI.new(Tracker)
     Event_Manager:activate_events(Tracker.Session.events)
