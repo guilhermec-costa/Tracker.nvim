@@ -63,10 +63,11 @@ event_handler.handle_buf_enter = function(data)
     project_aggregator.counter = project_aggregator.counter + 1
     filetype_aggregator[bufext].counter = filetype_aggregator[bufext].counter + 1
 
+    local debounce = data.Session.event_debounce_time
     filepath_aggregator[bufname].__buf_timer = vim.loop.new_timer()
-    filepath_aggregator[bufname].__buf_timer:start(1000, 3000, vim.schedule_wrap(function()
-        filepath_aggregator[bufname].timer = filepath_aggregator[bufname].timer + (3000 / 1000)
-        filetype_aggregator[bufext].timer = filetype_aggregator[bufext].timer + (3000 / 1000)
+    filepath_aggregator[bufname].__buf_timer:start(1000, debounce, vim.schedule_wrap(function()
+        filepath_aggregator[bufname].timer = filepath_aggregator[bufname].timer + (debounce / 1000)
+        filetype_aggregator[bufext].timer = filetype_aggregator[bufext].timer + (debounce / 1000)
         filepath_aggregator[bufname].metadata.buf_timer_status = 1
     end))
 end
@@ -265,10 +266,6 @@ event_handler.handle_buf_delete = function(data)
 end
 
 ---@param data Tracker
-event_handler.handle_dir_changed = function(data)
-end
-
----@param data Tracker
 ---@return nil
 event_handler.handle_recorded_macro = function(data)
     local bufname = vim.fn.expand("%")
@@ -312,6 +309,7 @@ event_handler.handle_vim_enter = function(data)
     })
 end
 
+---@param data Tracker
 event_handler.handle_search_wrapper = function(data)
     local bufname = vim.fn.expand("%")
     local bufext = vim.fn.expand("%:e")
@@ -322,6 +320,11 @@ event_handler.handle_search_wrapper = function(data)
     increment_key_by_aggregator(filepath_aggregator[bufname], "search_wrapper")
     increment_key_by_aggregator(filetype_aggregator[bufext], "search_wrapper")
     increment_key_by_aggregator(project_aggregator, "search_wrapper")
+end
+
+---@param data Tracker
+event_handler.handle_vim_leave = function(data)
+    data.Session.persistor:save_session_data_to_json_file()
 end
 
 return event_handler

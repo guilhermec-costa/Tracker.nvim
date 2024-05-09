@@ -42,7 +42,7 @@ function TrackerAPI:initialize(opts)
     self.Notifier = notifier.new({
         title = "Tracker",
     })
-    self:start_timer(opts.timer_debounce)
+    self:start_timer(self.event_debounce_time)
 end
 
 function TrackerAPI:__generate_tracker_default_values()
@@ -85,12 +85,11 @@ function TrackerAPI:start_timer(debounce)
     local timer = vim.loop.new_timer()
     self.timer = timer
     if self.has_timer_started == false then
-        --self:notify("Tracker Timer has started")
-        timer:start(700, debounce, vim.schedule_wrap(function()
+        timer:start(1000, debounce, vim.schedule_wrap(function()
             if self.is_running then
                 self.runned_for = self.runned_for + (debounce / 1000)
                 self.timer_to_save = self.timer_to_save + (debounce / 1000)
-                if self.timer_to_save > 20 then
+                if self.timer_to_save > 120 then
                     self.persistor:save_session_data_to_json_file()
                     self.timer_to_save = 0
                 end

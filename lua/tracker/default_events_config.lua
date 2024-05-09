@@ -110,6 +110,13 @@ return {
         group = events_group,
         handler = event_handlers.handle_vim_enter
     },
+    VimLeave = {
+        pattern = "*",
+        desc = "After leave vim",
+        type = "VimLeave",
+        group = events_group,
+        handler = event_handlers.handle_vim_leave
+    },
     --[[ ImBored = {
         pattern = "*",
         desc = "Yep, you pressed the same key 42 times and were able to trigger this fucking event",

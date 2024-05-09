@@ -152,12 +152,20 @@ end
 
 ---@return table<string, table<string, number>>
 function AggregatorAPI:overview_by_filetype()
+    local session_duration = self.Session.Session.runned_for
+    local project_aggregator = self.Data.session_scoped.buffers.aggregators.project
     local output = {}
     local filetype_aggregator = self.Data.session_scoped.buffers.aggregators.filetype
     for filetype, values in pairs(filetype_aggregator) do
         output[filetype] = {
-            timer = values.timer,
-            counter = values.counter,
+            timer = {
+                sec = values.timer,
+                ["%"] = math.ceil(values.timer / session_duration * 100)
+            },
+            counter = {
+                counter = values.counter,
+                ["%"] = math.ceil(values.counter / project_aggregator.counter * 100)
+            },
             keystrokes = values.keystrokes,
             yanked = values.yanked,
             saved = values.saved,
@@ -195,6 +203,7 @@ function AggregatorAPI:prepare_data_for_json_file()
     output.session_name = self.Session.Session.session_name
     output.session_duration = self.Session.Session.runned_for
     output.will_be_deleted_on = self.Session.Session.will_be_deleted_on
+    output.saved_at = os.date("%c")
     output["project"] = self:project_overview()
     output["filepath"] = self:overview_by_buffer()
     output["filetype"] = self:overview_by_filetype()
