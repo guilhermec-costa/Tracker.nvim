@@ -3,7 +3,7 @@ local utils = require "tracker.utils"
 
 ---@class AggregatorAPI
 ---@field Data table
----@field Session Tracker 
+---@field Session Tracker
 local AggregatorAPI = {}
 AggregatorAPI.__index = AggregatorAPI
 
@@ -194,6 +194,7 @@ function AggregatorAPI:prepare_data_for_json_file()
     output.session_id = self.Session.Session.session_id
     output.session_name = self.Session.Session.session_name
     output.session_duration = self.Session.Session.runned_for
+    output.will_be_deleted_on = self.Session.Session.will_be_deleted_on
     output["project"] = self:project_overview()
     output["filepath"] = self:overview_by_buffer()
     output["filetype"] = self:overview_by_filetype()

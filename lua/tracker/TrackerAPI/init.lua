@@ -10,6 +10,8 @@ local notifier = require "tracker.TrackerAPI.Notifier"
 ---@field event_debounce_time number
 ---@field is_running boolean
 ---@field runned_for number
+---@field cleanup_session_files_frequency number
+---@field will_be_deleted_on osdate|string
 ---@field has_timer_started boolean
 ---@field allow_notifications boolean
 ---@field Notifier table
@@ -27,10 +29,14 @@ function TrackerAPI:initialize(opts)
     local defaults = self:__generate_tracker_default_values()
     self.session_id = defaults.session_id
     self.session_name = defaults.session_name
+    self.will_be_deleted_on = defaults.will_be_deleted_on
+    self.cleanup_session_files_frequency = opts.cleanup_session_files_frequency or 7
+    self.save_session_data_frequency = opts.save_session_data_frequency or 20
     self.events = events_configs
     self.event_debounce_time = opts.event_debounce_time
     self.is_running = true
     self.runned_for = 0
+    self.timer_to_save = 0
     self.has_timer_started = false
     self.allow_notifications = opts.allow_notifications
     self.Notifier = notifier.new({
@@ -41,12 +47,14 @@ end
 
 function TrackerAPI:__generate_tracker_default_values()
     local tracker_start_timestamp = os.time()
+    local add_to_creation_time = 7 * 24 * 60 * 60
     local session_id = utils.generate_random_uuid();
     local session_name = tostring(os.date("%Y_%m_%d_%H_%M_%S"))
     return {
         start_timestamp = tracker_start_timestamp,
         session_id = session_id,
-        session_name = session_name
+        session_name = session_name,
+        will_be_deleted_on = os.date("%c", tracker_start_timestamp + add_to_creation_time)
     }
 end
 
@@ -81,10 +89,11 @@ function TrackerAPI:start_timer(debounce)
         timer:start(700, debounce, vim.schedule_wrap(function()
             if self.is_running then
                 self.runned_for = self.runned_for + (debounce / 1000)
-                if self.runned_for > 40 then
+                self.timer_to_save = self.timer_to_save + (debounce / 1000)
+                if self.timer_to_save > 20 then
                     self.persistor:save_session_data_to_json_file()
+                    self.timer_to_save = 0
                 end
-                -- persist-frequency logic goes here
             end
         end))
         self.has_timer_started = true

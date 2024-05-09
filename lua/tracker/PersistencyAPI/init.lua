@@ -9,7 +9,7 @@ PersistencyAPI.__index = PersistencyAPI
 ---@param tracker_session Tracker
 ---@param opts table|nil
 ---@return PersistencyAPI
-function PersistencyAPI.create_storage(tracker_session, opts)
+function PersistencyAPI.new_persistor(tracker_session, opts)
     local self = setmetatable({}, PersistencyAPI)
     self.session = tracker_session
     self:initialize(opts)
@@ -20,7 +20,6 @@ end
 function PersistencyAPI:initialize(opts)
     opts = opts or {}
     self.persistence_location = opts.persistence_location or os.getenv("HOME") .. "/.config/tracker"
-    self.cleanup_session_files_frequency = opts.cleanup_session_files_frequency or 7
     self:create_persistence_folder()
 end
 
@@ -52,7 +51,15 @@ function PersistencyAPI:remove_session_file(filepath)
     pcall(os.execute, "rm " .. filepath)
 end
 
-function PersistencyAPI:schedule_session_file_deletion()
+function PersistencyAPI:start_cleaning_process()
+    local limit_in_days_for_session_file_to_expire = self.session.Session.cleanup_session_files_frequency
+    local session_files = io.popen("find ~/.config/tracker/data/ -type f +" ..
+        tostring(limit_in_days_for_session_file_to_expire))
+    if session_files ~= nil then
+        for filepath in session_files:lines() do
+            self:remove_session_file(filepath)
+        end
+    end
 end
 
 return PersistencyAPI
