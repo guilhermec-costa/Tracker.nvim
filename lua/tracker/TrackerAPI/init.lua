@@ -4,6 +4,7 @@ local notifier = require "tracker.TrackerAPI.Notifier"
 
 ---@class TrackerAPI
 ---@field session_id string
+---@field active_project string
 ---@field persistor PersistencyAPI
 ---@field session_name string
 ---@field events table<string, table>

@@ -223,6 +223,7 @@ function AggregatorAPI:project_overview()
     local output = {}
 
     local project_aggregator = self.Data.session_scoped.buffers.aggregators.project
+    output.name = project_aggregator.name
     output.keystrokes = project_aggregator.keystrokes
     output.timer = self.Session.Session.runned_for
     output.counter = project_aggregator.counter

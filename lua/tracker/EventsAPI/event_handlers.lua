@@ -313,11 +313,8 @@ end
 ---@param data Tracker
 event_handler.handle_vim_enter = function(data)
     local current_directory = vim.fn.getcwd()
-    data.Aggregator:add_aggregator({
-        aggregator_name = current_directory,
-        aggregator_path = "session_scoped.buffers.aggregators.project"
-    })
     local project_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.project
+    project_aggregator.name = current_directory
     project_aggregator.timer = 0
     project_aggregator.counter = 0
     project_aggregator.keystrokes = 0

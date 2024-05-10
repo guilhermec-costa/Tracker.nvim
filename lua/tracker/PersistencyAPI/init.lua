@@ -20,31 +20,38 @@ end
 function PersistencyAPI:initialize(opts)
     opts = opts or {}
     self.persistence_location = opts.persistence_location or os.getenv("HOME") .. "/.config/tracker"
-    self:create_persistence_folder()
+    self:setup_persistence_structure()
 end
 
-function PersistencyAPI:create_persistence_folder()
+function PersistencyAPI:setup_persistence_structure()
     local dir_exists = os.execute('[ -d "' .. self.persistence_location .. '" ]')
+    local current_date = os.date("%Y_%m_%d")
     if dir_exists ~= 0 then
         os.execute("mkdir " .. self.persistence_location)
         os.execute("mkdir " .. self.persistence_location .. "/data")
     end
+    local day_folder_exists = os.execute('[ -d "' .. self.persistence_location .. "/data/" .. current_date .. '" ]')
+    if day_folder_exists ~= 0 then
+        os.execute("mkdir " .. self.persistence_location .. "/data/" .. current_date)
+    end
 end
 
 function PersistencyAPI:save_session_data_to_json_file()
+    local current_date = os.date("%Y_%m_%d")
     local buffers_overview = self.session.Aggregator:prepare_data_for_json_file()
     local stringified_agg = json.encode(buffers_overview)
-    local file = io.open(self.persistence_location .. "/data/" .. self.session.Session.session_name .. ".json", "w")
+    local file = io.open(
+    self.persistence_location .. "/data/" .. current_date .. "/" .. self.session.Session.session_name .. ".json", "w")
     if file then
         file:write(stringified_agg)
-        return file:read()
+        return file:read(), 1
     end
 end
 
 function PersistencyAPI:remove_session_file(filepath)
     local file_exists = os.execute('[ -f "' .. filepath .. '" ]')
     if file_exists ~= 0 then
-        print("File does not exists")
+        print("File does not exist")
         return
     end
 
