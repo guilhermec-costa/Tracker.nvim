@@ -43,6 +43,11 @@ event_handler.handle_buf_enter = function(data)
 
         filepath_aggregator[bufname].timer = 0
         filepath_aggregator[bufname].counter = 0
+        filepath_aggregator[bufname].keystrokes = 0
+        filepath_aggregator[bufname].yanked = 0
+        filepath_aggregator[bufname].saved = 0
+        filepath_aggregator[bufname].cmd_mode = 0
+        filepath_aggregator[bufname].insert_mode = 0
     end
 
     if filetype_aggregator[bufext] == nil then
@@ -57,6 +62,11 @@ event_handler.handle_buf_enter = function(data)
 
         filetype_aggregator[bufext].timer = 0
         filetype_aggregator[bufext].counter = 0
+        filetype_aggregator[bufext].keystrokes = 0
+        filetype_aggregator[bufext].yanked = 0
+        filetype_aggregator[bufext].saved = 0
+        filetype_aggregator[bufext].cmd_mode = 0
+        filetype_aggregator[bufext].insert_mode = 0
     end
 
     filepath_aggregator[bufname].counter = filepath_aggregator[bufname].counter + 1
@@ -307,6 +317,14 @@ event_handler.handle_vim_enter = function(data)
         aggregator_name = current_directory,
         aggregator_path = "session_scoped.buffers.aggregators.project"
     })
+    local project_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.project
+    project_aggregator.timer = 0
+    project_aggregator.counter = 0
+    project_aggregator.keystrokes = 0
+    project_aggregator.yanked = 0
+    project_aggregator.saved = 0
+    project_aggregator.cmd_mode = 0
+    project_aggregator.insert_mode = 0
 end
 
 ---@param data Tracker

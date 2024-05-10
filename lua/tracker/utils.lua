@@ -23,5 +23,12 @@ utils.split_string = function(inputstr, sep)
     return t
 end
 
+utils.calculate_field_percentage = function(dividing, divisor)
+    local result = math.ceil(dividing / divisor * 100)
+    if tostring(result) == "nan" then
+        return 0
+    end
+    return result
+end
 
 return utils

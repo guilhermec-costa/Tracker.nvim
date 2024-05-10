@@ -53,7 +53,7 @@ function AggregatorAPI:remove_aggregator(aggregator_path)
 
     for i = 1, #splitted_paths - 1 do
         local key = splitted_paths[i]
-        current_table[key] = current_table[key] or nil
+        current_table[key] = current_table[key] or 0
 
         if current_table[key] == nil then
             print("key \"" .. key .. "\" does not exist")
@@ -63,7 +63,7 @@ function AggregatorAPI:remove_aggregator(aggregator_path)
         current_table = current_table[key]
     end
 
-    local final_key = splitted_paths[#splitted_paths] or nil
+    local final_key = splitted_paths[#splitted_paths] or 0
     if current_table[final_key] == nil then
         print("final key \"" .. final_key .. "\" does not exist")
         return 0
@@ -133,16 +133,39 @@ end
 ---@return table<string, table<string, number>>
 function AggregatorAPI:overview_by_buffer()
     local output = {}
+    local session_duration = self.Session.Session.runned_for
+    local project_aggregator = self.Data.session_scoped.buffers.aggregators.project
     local filepath_aggregator = self.Data.session_scoped.buffers.aggregators.filepath
     for _, buffer in pairs(filepath_aggregator) do
         output[buffer.metadata.name] = {
-            timer = buffer.timer,
-            counter = buffer.counter,
-            keystrokes = buffer.keystrokes,
-            yanked = buffer.yanked,
-            saved = buffer.saved,
-            cmd_mode = buffer.cmd_mode,
-            insert_mode = buffer.insert_mode,
+            timer = {
+                value = buffer.timer,
+                ["%"] = utils.calculate_field_percentage(buffer.timer, session_duration)
+            },
+            counter = {
+                value = buffer.counter,
+                ["%"] = utils.calculate_field_percentage(buffer.counter, project_aggregator.counter)
+            },
+            keystrokes = {
+                value = buffer.keystrokes,
+                ["%"] = utils.calculate_field_percentage(buffer.keystrokes, project_aggregator.keystrokes)
+            },
+            yanked = {
+                value = buffer.yanked,
+                ["%"] = utils.calculate_field_percentage(buffer.yanked, project_aggregator.yanked)
+            },
+            saved = {
+                value = buffer.saved,
+                ["%"] = utils.calculate_field_percentage(buffer.saved, project_aggregator.saved)
+            },
+            cmd_mode = {
+                value = buffer.cmd_mode,
+                ["%"] = utils.calculate_field_percentage(buffer.cmd_mode, project_aggregator.cmd_mode)
+            },
+            insert_mode = {
+                value = buffer.insert_mode,
+                ["%"] = utils.calculate_field_percentage(buffer.insert_mode, project_aggregator.insert_mode)
+            },
             chars = buffer.chars
         }
     end
@@ -159,18 +182,33 @@ function AggregatorAPI:overview_by_filetype()
     for filetype, values in pairs(filetype_aggregator) do
         output[filetype] = {
             timer = {
-                sec = values.timer,
-                ["%"] = math.ceil(values.timer / session_duration * 100)
+                value = values.timer,
+                ["%"] = utils.calculate_field_percentage(values.timer, session_duration)
             },
             counter = {
-                counter = values.counter,
-                ["%"] = math.ceil(values.counter / project_aggregator.counter * 100)
+                value = values.counter,
+                ["%"] = utils.calculate_field_percentage(values.counter, project_aggregator.counter)
             },
-            keystrokes = values.keystrokes,
-            yanked = values.yanked,
-            saved = values.saved,
-            cmd_mode = values.cmd_mode,
-            insert_mode = values.insert_mode,
+            keystrokes = {
+                value = values.keystrokes,
+                ["%"] = utils.calculate_field_percentage(values.keystrokes, project_aggregator.keystrokes)
+            },
+            yanked = {
+                value = values.yanked,
+                ["%"] = utils.calculate_field_percentage(values.yanked, project_aggregator.yanked)
+            },
+            saved = {
+                value = values.saved,
+                ["%"] = utils.calculate_field_percentage(values.saved, project_aggregator.saved)
+            },
+            cmd_mode = {
+                value = values.cmd_mode,
+                ["%"] = utils.calculate_field_percentage(values.cmd_mode, project_aggregator.cmd_mode)
+            },
+            insert_mode = {
+                value = values.insert_mode,
+                ["%"] = utils.calculate_field_percentage(values.insert_mode, project_aggregator.insert_mode)
+            },
             chars = values.chars
         }
     end
@@ -191,7 +229,7 @@ function AggregatorAPI:project_overview()
     output.yanked = project_aggregator.yanked
     output.saved = project_aggregator.saved
     output.cmd_mode = project_aggregator.cmd_mode
-    output.insert_enter = project_aggregator.insert_enter
+    output.insert_mode = project_aggregator.insert_mode
 
     return output
 end
