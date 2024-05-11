@@ -224,6 +224,7 @@ function AggregatorAPI:project_overview()
 
     local project_aggregator = self.Data.session_scoped.buffers.aggregators.project
     output.name = project_aggregator.name
+    output.new_file = project_aggregator.new_file
     output.keystrokes = project_aggregator.keystrokes
     output.timer = self.Session.Session.runned_for
     output.counter = project_aggregator.counter
@@ -231,6 +232,7 @@ function AggregatorAPI:project_overview()
     output.saved = project_aggregator.saved
     output.cmd_mode = project_aggregator.cmd_mode
     output.insert_mode = project_aggregator.insert_mode
+    output.colorscheme_change = project_aggregator.colorscheme_change
 
     return output
 end

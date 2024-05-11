@@ -41,12 +41,11 @@ function PersistencyAPI:save_session_data_to_json_file()
 
     if file then
         file:write(stringified_agg)
-        return file:read(), 1
+        return nil, 1
     end
 end
 
 function PersistencyAPI:remove_session_file(filepath)
-    print(filepath)
     local file_exists = os.execute('[ -f "' .. filepath .. '" ]')
     if file_exists ~= 0 then
         print("File does not exist")

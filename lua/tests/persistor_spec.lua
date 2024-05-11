@@ -23,12 +23,19 @@ describe("persistor", function()
         assert.are.same(1, save_result_code)
     end)
 
+    it("can get data from session file", function()
+        local current_date = os.date("%Y_%m_%d")
+        local filepath = Tracker.Session.persistor.persistence_location ..
+            current_date .. "/" .. Tracker.Session.session_name .. ".json"
+        local file_content = Tracker.Session.persistor:get_session_data_from_file(filepath)
+        assert.are.same(type(file_content), "string")
+    end)
+
     it("can delete session file", function()
         local current_date = os.date("%Y_%m_%d")
         local filepath_to_delete = Tracker.Session.persistor.persistence_location ..
-        current_date .. "/" .. Tracker.Session.session_name .. ".json"
+            current_date .. "/" .. Tracker.Session.session_name .. ".json"
         local save_result_code = Tracker.Session.persistor:remove_session_file(filepath_to_delete)
         assert.are.same(1, save_result_code)
     end)
 end)
----@type TrackerAPI

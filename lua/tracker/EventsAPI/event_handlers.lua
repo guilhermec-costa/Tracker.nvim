@@ -342,4 +342,29 @@ event_handler.handle_vim_leave = function(data)
     data.Session.persistor:save_session_data_to_json_file()
 end
 
+---@param data Tracker
+event_handler.handle_buf_new_file = function(data)
+    local project_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.project
+    increment_key_by_aggregator(project_aggregator, "new_file")
+end
+
+---@param data Tracker
+event_handler.handle_colorscheme_change = function(data)
+    local bufname = vim.fn.expand("%")
+    local bufext = vim.fn.expand("%:e")
+
+    local project_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.project
+    local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
+    local filetype_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filetype
+    increment_key_by_aggregator(filepath_aggregator[bufname], "colorscheme_change")
+    increment_key_by_aggregator(filetype_aggregator[bufext], "colorscheme_change")
+    increment_key_by_aggregator(project_aggregator, "colorscheme_change")
+end
+
+---@param data Tracker
+event_handler.handle_vim_get_focus = function(data)
+    local project_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.project
+    increment_key_by_aggregator(project_aggregator, "get_focus")
+end
+
 return event_handler

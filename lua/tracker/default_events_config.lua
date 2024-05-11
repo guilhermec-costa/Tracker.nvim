@@ -54,6 +54,13 @@ return {
         group = events_group,
         handler = event_handlers.handle_insert_leave
     },
+    BufNewFile = {
+        pattern = "*",
+        desc = "When editing a new file",
+        type = "BufNewFile",
+        group = events_group,
+        handler = event_handlers.handle_buf_new_file
+    },
     BufWrite = {
         pattern = "*",
         desc = "When saves a buffer",
@@ -96,6 +103,13 @@ return {
         group = events_group,
         handler = event_handlers.handle_mode_change
     },
+    ColorScheme = {
+        pattern = "*",
+        desc = "After change colorscheme",
+        type = "ColorScheme",
+        group = events_group,
+        handler = event_handlers.handle_colorscheme_change
+    },
     SearchWrapped = {
         pattern = "*",
         desc = "After make a search",
@@ -116,6 +130,13 @@ return {
         type = "VimLeave",
         group = events_group,
         handler = event_handlers.handle_vim_leave
+    },
+    FocusGained = {
+        pattern = "*",
+        desc = "After nvim got focused",
+        type = "VimLeave",
+        group = events_group,
+        handler = event_handlers.handle_vim_get_focus
     },
     --[[ ImBored = {
         pattern = "*",
