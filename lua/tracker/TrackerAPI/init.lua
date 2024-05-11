@@ -90,7 +90,7 @@ function TrackerAPI:start_timer(debounce)
             if self.is_running then
                 self.runned_for = self.runned_for + (debounce / 1000)
                 self.timer_to_save = self.timer_to_save + (debounce / 1000)
-                if self.timer_to_save > 120 then
+                if self.timer_to_save > 180 then
                     self.persistor:save_session_data_to_json_file()
                     self.timer_to_save = 0
                 end
