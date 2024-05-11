@@ -48,6 +48,8 @@ event_handler.handle_buf_enter = function(data)
         filepath_aggregator[bufname].saved = 0
         filepath_aggregator[bufname].cmd_mode = 0
         filepath_aggregator[bufname].insert_mode = 0
+        filepath_aggregator[bufname].mode_change = {}
+        filepath_aggregator[bufname].mode_change.by_mode = {}
     end
 
     if filetype_aggregator[bufext] == nil then
@@ -67,6 +69,8 @@ event_handler.handle_buf_enter = function(data)
         filetype_aggregator[bufext].saved = 0
         filetype_aggregator[bufext].cmd_mode = 0
         filetype_aggregator[bufext].insert_mode = 0
+        filetype_aggregator[bufext].mode_change = {}
+        filetype_aggregator[bufext].mode_change.by_mode = {}
     end
 
     filepath_aggregator[bufname].counter = filepath_aggregator[bufname].counter + 1
@@ -295,14 +299,20 @@ end
 event_handler.handle_mode_change = function(data)
     local bufname = vim.fn.expand("%")
     local bufext = vim.fn.expand("%:e")
+    local current_mode = vim.api.nvim_get_mode().mode
 
     local project_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.project
     local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
     local filetype_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filetype
 
-    increment_key_by_aggregator(project_aggregator, "mode_change")
-    increment_key_by_aggregator(filepath_aggregator[bufname], "mode_change")
-    increment_key_by_aggregator(filetype_aggregator[bufext], "mode_change")
+    increment_key_by_aggregator(project_aggregator.mode_change, "value")
+    increment_key_by_aggregator(project_aggregator.mode_change.by_mode, current_mode)
+
+    increment_key_by_aggregator(filepath_aggregator[bufname].mode_change, "value")
+    increment_key_by_aggregator(filepath_aggregator[bufname].mode_change.by_mode, current_mode)
+
+    increment_key_by_aggregator(filetype_aggregator[bufext].mode_change, "value")
+    increment_key_by_aggregator(filetype_aggregator[bufext].mode_change.by_mode, current_mode)
 end
 
 ---@param data Tracker
@@ -322,6 +332,8 @@ event_handler.handle_vim_enter = function(data)
     project_aggregator.saved = 0
     project_aggregator.cmd_mode = 0
     project_aggregator.insert_mode = 0
+    project_aggregator.mode_change = {}
+    project_aggregator.mode_change.by_mode = {}
 end
 
 ---@param data Tracker

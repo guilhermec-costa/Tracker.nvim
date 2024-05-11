@@ -162,9 +162,10 @@ function AggregatorAPI:overview_by_buffer()
                 value = buffer.cmd_mode,
                 ["%"] = utils.calculate_field_percentage(buffer.cmd_mode, project_aggregator.cmd_mode)
             },
-            insert_mode = {
-                value = buffer.insert_mode,
-                ["%"] = utils.calculate_field_percentage(buffer.insert_mode, project_aggregator.insert_mode)
+            mode_change = {
+                value = buffer.mode_change.value,
+                by_mode = buffer.mode_change.by_mode,
+                ["%"] = utils.calculate_field_percentage(buffer.mode_change.value, project_aggregator.mode_change.value)
             },
             chars = buffer.chars
         }
@@ -205,9 +206,10 @@ function AggregatorAPI:overview_by_filetype()
                 value = values.cmd_mode,
                 ["%"] = utils.calculate_field_percentage(values.cmd_mode, project_aggregator.cmd_mode)
             },
-            insert_mode = {
-                value = values.insert_mode,
-                ["%"] = utils.calculate_field_percentage(values.insert_mode, project_aggregator.insert_mode)
+            mode_change = {
+                value = values.mode_change.value,
+                by_mode = values.mode_change.by_mode,
+                ["%"] = utils.calculate_field_percentage(values.mode_change.value, project_aggregator.mode_change.value)
             },
             chars = values.chars
         }
@@ -231,8 +233,8 @@ function AggregatorAPI:project_overview()
     output.yanked = project_aggregator.yanked
     output.saved = project_aggregator.saved
     output.cmd_mode = project_aggregator.cmd_mode
-    output.insert_mode = project_aggregator.insert_mode
     output.colorscheme_change = project_aggregator.colorscheme_change
+    output.mode_change = project_aggregator.mode_change
 
     return output
 end
