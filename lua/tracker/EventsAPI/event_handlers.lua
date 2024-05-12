@@ -80,6 +80,8 @@ event_handler.handle_buf_enter = function(data)
         filetype_aggregator[bufext].timer = filetype_aggregator[bufext].timer + (debounce / 1000)
         filepath_aggregator[bufname].metadata.buf_timer_status = 1
     end))
+
+    data.Session.persistor:create_log("Enter a new buffer. Name: \"" .. bufname .. "\"" .. tostring(os.date("%c")))
 end
 
 ---@param data Tracker

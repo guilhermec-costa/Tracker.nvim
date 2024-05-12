@@ -7,6 +7,8 @@ local notifier = require "tracker.TrackerAPI.Notifier"
 ---@field active_project string
 ---@field persistor PersistencyAPI
 ---@field session_name string
+---@field timer_to_save number
+---@field timer_to_log number
 ---@field events table<string, table>
 ---@field event_debounce_time number
 ---@field is_running boolean
@@ -38,6 +40,7 @@ function TrackerAPI:initialize(opts)
     self.is_running = true
     self.runned_for = 0
     self.timer_to_save = 0
+    self.timer_to_log = 0
     self.has_timer_started = false
     self.allow_notifications = opts.allow_notifications
     self.Notifier = notifier.new({
@@ -90,6 +93,13 @@ function TrackerAPI:start_timer(debounce)
             if self.is_running then
                 self.runned_for = self.runned_for + (debounce / 1000)
                 self.timer_to_save = self.timer_to_save + (debounce / 1000)
+                self.timer_to_log = self.timer_to_log + (debounce / 1000)
+                if self.timer_to_log > 20 then
+                    self.persistor:persist_logs()
+                    self.persistor:clear_logs()
+                    self.timer_to_log = 0
+                end
+
                 if self.timer_to_save > 180 then
                     self.persistor:save_session_data_to_json_file()
                     self.timer_to_save = 0

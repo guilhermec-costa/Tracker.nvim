@@ -2,6 +2,8 @@ local json = require "tracker.json"
 ---@class PersistencyAPI
 ---@field session Tracker
 ---@field persistence_location string
+---@field logs_location string
+---@field accumulated_logs table
 local PersistencyAPI = {}
 PersistencyAPI.__index = PersistencyAPI
 
@@ -20,6 +22,8 @@ end
 function PersistencyAPI:initialize(opts)
     opts = opts or {}
     self.persistence_location = opts.persistence_location or os.getenv("HOME") .. "/.config/tracker/data/"
+    self.logs_location = opts.logs_location or os.getenv("HOME") .. "/.config/tracker/logs/"
+    self.accumulated_logs = {}
     self:setup_persistence_structure()
 end
 
@@ -30,6 +34,7 @@ function PersistencyAPI:setup_persistence_structure()
     if day_folder_exists ~= 0 then
         os.execute("mkdir -p " .. self.persistence_location .. current_date)
     end
+    os.execute("mkdir -p " .. self.logs_location .. current_date)
 end
 
 function PersistencyAPI:save_session_data_to_json_file()
@@ -80,6 +85,29 @@ function PersistencyAPI:get_session_data_from_file(filepath)
     else
         print("File does not exist")
     end
+end
+
+function PersistencyAPI:persist_logs()
+    local current_date = os.date("%Y_%m_%d")
+    local file = io.open(
+        self.logs_location .. current_date .. "/" .. self.session.Session.session_name .. "_logs.txt", "a")
+
+    if file == nil or #self.accumulated_logs == 0 then
+        return
+    end
+
+    for _, line in ipairs(self.accumulated_logs) do
+        file:write(line .. "\n")
+    end
+    file:close()
+end
+
+function PersistencyAPI:create_log(message)
+    table.insert(self.accumulated_logs, tostring(message))
+end
+
+function PersistencyAPI:clear_logs()
+    self.accumulated_logs = {}
 end
 
 return PersistencyAPI
