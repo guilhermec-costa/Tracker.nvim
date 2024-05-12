@@ -23,7 +23,6 @@ function AggregatorAPI:initialize()
             aggregator_path = agg.aggregator_path
         })
     end
-    self.Data.session_scoped.buffers.aggregators.project.counter = 0
 end
 
 ---@param opts New_Aggregator
@@ -158,14 +157,14 @@ function AggregatorAPI:overview_by_buffer()
                 value = buffer.saved,
                 ["%"] = utils.calculate_field_percentage(buffer.saved, project_aggregator.saved)
             },
-            cmd_mode = {
-                value = buffer.cmd_mode,
-                ["%"] = utils.calculate_field_percentage(buffer.cmd_mode, project_aggregator.cmd_mode)
-            },
             mode_change = {
                 value = buffer.mode_change.value,
                 by_mode = buffer.mode_change.by_mode,
                 ["%"] = utils.calculate_field_percentage(buffer.mode_change.value, project_aggregator.mode_change.value)
+            },
+            recorded_macros = {
+                value = buffer.recorded_macros,
+                ["%"] = utils.calculate_field_percentage(buffer.recorded_macros, project_aggregator.recorded_macros)
             },
             chars = buffer.chars
         }
@@ -202,14 +201,14 @@ function AggregatorAPI:overview_by_filetype()
                 value = values.saved,
                 ["%"] = utils.calculate_field_percentage(values.saved, project_aggregator.saved)
             },
-            cmd_mode = {
-                value = values.cmd_mode,
-                ["%"] = utils.calculate_field_percentage(values.cmd_mode, project_aggregator.cmd_mode)
-            },
             mode_change = {
                 value = values.mode_change.value,
                 by_mode = values.mode_change.by_mode,
                 ["%"] = utils.calculate_field_percentage(values.mode_change.value, project_aggregator.mode_change.value)
+            },
+            recorded_macros = {
+                value = values.recorded_macros,
+                ["%"] = utils.calculate_field_percentage(values.recorded_macros, project_aggregator.recorded_macros)
             },
             chars = values.chars
         }
@@ -230,9 +229,11 @@ function AggregatorAPI:project_overview()
     output.keystrokes = project_aggregator.keystrokes
     output.timer = self.Session.Session.runned_for
     output.counter = project_aggregator.counter
+    output.recorded_macros = project_aggregator.recorded_macros
+    output.buffers_deleted = project_aggregator.buffers_deleted
+    output.buffers_added = project_aggregator.buffers_added
     output.yanked = project_aggregator.yanked
     output.saved = project_aggregator.saved
-    output.cmd_mode = project_aggregator.cmd_mode
     output.colorscheme_change = project_aggregator.colorscheme_change
     output.mode_change = project_aggregator.mode_change
 

@@ -41,7 +41,7 @@ function PersistencyAPI:save_session_data_to_json_file()
 
     if file then
         file:write(stringified_agg)
-        return nil, 1
+        return file:read(), 1
     end
 end
 

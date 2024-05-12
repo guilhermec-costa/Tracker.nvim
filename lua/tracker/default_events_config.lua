@@ -26,33 +26,12 @@ return {
         group = events_group,
         handler = event_handlers.handle_buf_leave
     },
-    CmdLineLeave = {
-        pattern = "*",
-        desc = "When leave cmd line mode",
-        type = "CmdlineLeave",
-        group = events_group,
-        handler = event_handlers.handle_cmdline_leave
-    },
     LostFocus = {
         pattern = "*",
         desc = "When any UI interaction is made",
         type = "FocusLost",
         group = events_group,
         handler = event_handlers.handle_lost_focus
-    },
-    InsertMode = {
-        pattern = "*",
-        desc = "When enters insert mode",
-        type = "InsertEnter",
-        group = events_group,
-        handler = event_handlers.handle_insert_enter
-    },
-    InsertLeave = {
-        pattern = "*",
-        desc = "When leaves insert mode",
-        type = "InsertLeave",
-        group = events_group,
-        handler = event_handlers.handle_insert_leave
     },
     BufNewFile = {
         pattern = "*",
@@ -124,10 +103,10 @@ return {
         group = events_group,
         handler = event_handlers.handle_vim_enter
     },
-    VimLeave = {
+    VimLeavePre = {
         pattern = "*",
         desc = "After leave vim",
-        type = "VimLeave",
+        type = "VimLeavePre",
         group = events_group,
         handler = event_handlers.handle_vim_leave
     },
