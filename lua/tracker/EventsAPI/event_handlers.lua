@@ -1,5 +1,6 @@
 ---@module "event_handler"
 local event_handler = {}
+local log_date_format = "%Y/%m/%d %H:%M:%S"
 
 ---@param aggregator table
 ---@param key string
@@ -81,7 +82,8 @@ event_handler.handle_buf_enter = function(data)
         filepath_aggregator[bufname].metadata.buf_timer_status = 1
     end))
 
-    data.Session.persistor:create_log("Enter a new buffer. Name: \"" .. bufname .. "\"" .. tostring(os.date("%c")))
+    data.Session.persistor:create_log("Entered at new buffer named \"" ..
+        bufname .. "\" on " .. tostring(os.date(log_date_format)))
 end
 
 ---@param data Tracker
@@ -101,6 +103,9 @@ event_handler.handle_buf_leave = function(data)
     filepath_aggregator[bufname].__buf_timer:close()
     filepath_aggregator[bufname].metadata.buf_timer_status = 0
     filepath_aggregator.timer = filepath_aggregator.timer + filepath_aggregator[bufname].timer
+
+    data.Session.persistor:create_log("Left at buffer named \"" ..
+        bufname .. "\" on" .. tostring(os.date(log_date_format)))
 end
 
 ---@param data Tracker
@@ -116,6 +121,9 @@ event_handler.handle_text_yank = function(data)
     increment_key_by_aggregator(project_aggregator, "yanked")
     increment_key_by_aggregator(filetype_aggregator[bufext], "yanked")
     increment_key_by_aggregator(filepath_aggregator[bufname], "yanked")
+
+    data.Session.persistor:create_log("Yanked text at buffer \"" ..
+        bufname .. "\" on " .. tostring(os.date(log_date_format)))
 end
 
 ---@param data Tracker
@@ -131,6 +139,9 @@ event_handler.handle_lost_focus = function(data)
     increment_key_by_aggregator(project_aggregator, "lost_focus")
     increment_key_by_aggregator(filetype_aggregator[bufext], "lost_focus")
     increment_key_by_aggregator(filepath_aggregator[bufname], "lost_focus")
+
+    data.Session.persistor:create_log("Vim has lost focus at buffer \"" ..
+        bufname .. "\" on " .. tostring(os.date(log_date_format)))
 end
 
 ---@param data Tracker
@@ -147,6 +158,9 @@ event_handler.handle_buf_write = function(data)
     increment_key_by_aggregator(project_aggregator, "saved")
     increment_key_by_aggregator(filetype_aggregator[bufext], "saved")
     increment_key_by_aggregator(filepath_aggregator[bufname], "saved")
+
+    data.Session.persistor:create_log("Vim has lost focus at buffer \"" ..
+        bufname .. "\" on " .. tostring(os.date(log_date_format)))
 end
 
 ---@param data Tracker
@@ -244,6 +258,8 @@ event_handler.handle_recorded_macro = function(data)
     increment_key_by_aggregator(project_aggregator, "recorded_macros")
     increment_key_by_aggregator(filepath_aggregator[bufname], "recorded_macros")
     increment_key_by_aggregator(filetype_aggregator[bufext], "recorded_macros")
+    data.Session.persistor:create_log("Recorded new macro at buffer \"" ..
+        bufname .. "\" on " .. tostring(os.date(log_date_format)))
 end
 
 ---@param data Tracker
@@ -265,6 +281,9 @@ event_handler.handle_mode_change = function(data)
 
     increment_key_by_aggregator(filetype_aggregator[bufext].mode_change, "value")
     increment_key_by_aggregator(filetype_aggregator[bufext].mode_change.by_mode, current_mode)
+
+    data.Session.persistor:create_log("Change vim mode to \"" .. current_mode .. "\" at buffer \"" ..
+        bufname .. "\" on " .. tostring(os.date(log_date_format)))
 end
 
 ---@param data Tracker

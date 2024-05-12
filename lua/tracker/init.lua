@@ -2,6 +2,7 @@ local TrackerAPI = require "tracker.TrackerAPI"
 local EventsAPI = require "tracker.EventsAPI"
 local AggregatorAPI = require "tracker.AggregatorAPI"
 local PersistenceAPI = require "tracker.PersistencyAPI"
+local log_date_format = "%Y/%m/%d %H:%M:%S"
 
 require "tracker.commands"
 
@@ -14,12 +15,18 @@ function Tracker.setup(opts)
     ---@type TrackerAPI
     Tracker.Session = TrackerAPI.new_session(opts)
 
+
     ---@type AggregatorAPI
     Tracker.Aggregator = AggregatorAPI.new_aggregator(Tracker)
 
     ---@type PersistencyAPI
     Tracker.Session.persistor = PersistenceAPI.new_persistor(Tracker)
+    Tracker.Session.persistor:create_log(Tracker.Session:get_tracker_ascii())
+    Tracker.Session.persistor:create_log("TrackerAPIs have been initialized on " .. os.date(log_date_format))
+
     Tracker.Session.persistor:start_cleaning_process()
+    Tracker.Session.persistor:create_log("Cleaning process has been finished on " .. os.date(log_date_format))
+
 
     local Event_Manager = EventsAPI.new(Tracker)
     Event_Manager:activate_events(Tracker.Session.events)

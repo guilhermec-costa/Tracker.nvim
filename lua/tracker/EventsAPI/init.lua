@@ -1,6 +1,7 @@
 ---@class Event_Manager
 ---@field corresponding_session Tracker
 local Event_Manager = {}
+local log_date_format = "%Y/%m/%d %H:%M:%S"
 Event_Manager.__index = Event_Manager
 
 ---@param tracker_session Tracker
@@ -30,6 +31,7 @@ function Event_Manager:activate_events(_events)
         _events[event_name].status = 1
         _events[event_name].id = autocmd_id
     end
+    self.corresponding_session.Session.persistor:create_log("Tracker events have been initialized on " .. os.date(log_date_format))
 end
 
 function Event_Manager:deactivate_events(_events)

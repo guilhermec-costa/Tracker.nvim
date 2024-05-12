@@ -11,6 +11,7 @@ local notifier = require "tracker.TrackerAPI.Notifier"
 ---@field timer_to_log number
 ---@field events table<string, table>
 ---@field event_debounce_time number
+---@field logs_permission boolean
 ---@field is_running boolean
 ---@field runned_for number
 ---@field cleanup_session_files_frequency number
@@ -38,6 +39,7 @@ function TrackerAPI:initialize(opts)
     self.events = events_configs
     self.event_debounce_time = opts.event_debounce_time
     self.is_running = true
+    self.logs_permission = opts.logs_permission or false
     self.runned_for = 0
     self.timer_to_save = 0
     self.timer_to_log = 0
@@ -152,6 +154,22 @@ function TrackerAPI:notify(message, type)
     else
         print(message)
     end
+end
+
+---@return string
+function TrackerAPI:get_tracker_ascii()
+    return [[
+
+ _____                     _                                  _
+|_   _|                   | |                                (_)
+  | |   _ __   __ _   ___ | | __  ___  _ __     _ __  __   __ _  _ __ ___
+  | |  | '__| / _` | / __|| |/ / / _ \| '__|   | '_ \ \ \ / /| || '_ ` _ \
+  | |  | |   | (_| || (__ |   < |  __/| |    _ | | | | \ V / | || | | | | |
+  \_/  |_|    \__,_| \___||_|\_\ \___||_|   (_)|_| |_|  \_/  |_||_| |_| |_|
+
+
+
+    ]]
 end
 
 return TrackerAPI

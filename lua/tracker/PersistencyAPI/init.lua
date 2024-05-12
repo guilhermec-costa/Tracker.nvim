@@ -4,7 +4,9 @@ local json = require "tracker.json"
 ---@field persistence_location string
 ---@field logs_location string
 ---@field accumulated_logs table
+---@field logs_permission boolean
 local PersistencyAPI = {}
+local log_date_format = "%Y/%m/%d %H:%M:%S"
 PersistencyAPI.__index = PersistencyAPI
 
 
@@ -23,6 +25,7 @@ function PersistencyAPI:initialize(opts)
     opts = opts or {}
     self.persistence_location = opts.persistence_location or os.getenv("HOME") .. "/.config/tracker/data/"
     self.logs_location = opts.logs_location or os.getenv("HOME") .. "/.config/tracker/logs/"
+    self.logs_permission = self.session.Session.logs_permission or false
     self.accumulated_logs = {}
     self:setup_persistence_structure()
 end
@@ -46,6 +49,10 @@ function PersistencyAPI:save_session_data_to_json_file()
 
     if file then
         file:write(stringified_agg)
+        self:create_log('Session file from Tracker session "' ..
+            self.session.Session.session_name .. '" has been saved on ' .. os.date(log_date_format))
+        self:persist_logs()
+        self:clear_logs()
         return file:read(), 1
     end
 end
@@ -58,6 +65,7 @@ function PersistencyAPI:remove_session_file(filepath)
     end
 
     pcall(os.execute, "rm " .. filepath)
+    self:create_log(filepath .. "has been deleted on " .. os.date(log_date_format))
     return 1
 end
 
@@ -103,7 +111,9 @@ function PersistencyAPI:persist_logs()
 end
 
 function PersistencyAPI:create_log(message)
-    table.insert(self.accumulated_logs, tostring(message))
+    if self.logs_permission then
+        table.insert(self.accumulated_logs, tostring(message))
+    end
 end
 
 function PersistencyAPI:clear_logs()
