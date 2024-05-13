@@ -220,6 +220,7 @@ event_handler.handle_buf_add = function(data)
 
     increment_key_by_aggregator(project_aggregator, "buffers_added")
     increment_key_by_aggregator(filetype_aggregator[bufext], "buffers_added")
+    data.Session.persistor:create_log("Added buffer on " .. tostring(os.date(log_date_format)))
 end
 
 ---@param data Tracker
@@ -243,6 +244,7 @@ event_handler.handle_buf_delete = function(data)
 
     increment_key_by_aggregator(project_aggregator, "buffers_deleted")
     increment_key_by_aggregator(filetype_aggregator[bufext], "buffers_deleted")
+    data.Session.persistor:create_log("Deleted buffer on " .. tostring(os.date(log_date_format)))
 end
 
 ---@param data Tracker

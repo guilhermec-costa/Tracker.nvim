@@ -35,8 +35,12 @@ function PersistencyAPI:setup_persistence_structure()
 
     if day_folder_exists ~= 0 then
         os.execute("mkdir -p " .. self.persistence_location .. current_date)
+        self:create_log('Session persistence folder created at "' ..
+            self.persistence_location .. current_date .. '" on ' .. os.date(log_date_format))
     end
     os.execute("mkdir -p " .. self.logs_location .. current_date)
+    self:create_log('Logs persistence folder created at "' ..
+        self.logs_location .. current_date .. '" on ' .. os.date(log_date_format))
 end
 
 function PersistencyAPI:save_session_data_to_json_file()
@@ -99,18 +103,22 @@ function PersistencyAPI:clear_session_files_based_on_time_deletion()
         for filepath in session_files:lines() do
             self:remove_session_file(filepath)
         end
+        self:create_log('Session files created ' ..
+            tostring(limit_in_days_for_session_files_to_expire) .. '+ ago were deleted from filesystem')
     end
 end
 
 function PersistencyAPI:clear_log_files_based_on_time_deletion()
     local current_date = os.date("%Y_%m_%d")
-    local limit_in_days_for_log_files_to_expire = self.session.Session.cleanup_log_files_frequency
+    local limit_in_days_for_log_files_to_expire = self.session.Session.cleanup_log_files_frequency or 0
     local logs_files = io.popen("find " .. self.logs_location .. current_date .. " -type f -mtime +" ..
         tostring(limit_in_days_for_log_files_to_expire))
     if logs_files ~= nil then
         for filepath in logs_files:lines() do
             self:remove_session_file(filepath)
         end
+        self:create_log('Log files created ' ..
+            tostring(limit_in_days_for_log_files_to_expire) .. '+ ago were deleted from filesystem')
     end
 end
 
@@ -128,7 +136,8 @@ function PersistencyAPI:get_session_data_from_file(filepath)
         local file_content = io.read("l")
         return file_content
     else
-        self:create_log('File "' .. filepath .. '" does not exist')
+        self:create_log('Tryed to get data from session file of session "' ..
+            self.session.Session.session_name .. '", but failed on ' .. os.date(log_date_format))
     end
 end
 
@@ -145,8 +154,11 @@ function PersistencyAPI:persist_logs()
         file:write(line .. "\n")
     end
     file:close()
+    self:create_log('Logs from session "' ..
+        self.session.Session.session_name .. '" were persisted on ' .. os.date(log_date_format))
 end
 
+---@param message string
 function PersistencyAPI:create_log(message)
     if self.logs_permission then
         table.insert(self.accumulated_logs, tostring(message))
@@ -155,6 +167,8 @@ end
 
 function PersistencyAPI:clear_logs()
     self.accumulated_logs = {}
+    self:create_log('Internal logs from session "' ..
+        self.session.Session.session_name .. '" were cleaned on ' .. os.date(log_date_format))
 end
 
 return PersistencyAPI

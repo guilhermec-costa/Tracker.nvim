@@ -116,12 +116,5 @@ return {
         type = "VimLeave",
         group = events_group,
         handler = event_handlers.handle_vim_get_focus
-    },
-    --[[ ImBored = {
-        pattern = "*",
-        desc = "Yep, you pressed the same key 42 times and were able to trigger this fucking event",
-        type = "UserGettingBored",
-        group = events_group,
-        handler = event_handlers.handle_bored_user
-    }, ]]
+    }
 }
