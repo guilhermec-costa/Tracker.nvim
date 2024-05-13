@@ -322,6 +322,13 @@ end
 ---@param data Tracker
 event_handler.handle_vim_leave = function(data)
     data.Session.persistor:save_session_data_to_json_file()
+    if data.Session.cleanup_session_files_on_session_end then
+        data.Session.persistor:clear_session_files()
+    end
+
+    if data.Session.cleanup_log_files_on_session_end then
+        data.Session.persistor:clear_log_files()
+    end
 end
 
 ---@param data Tracker

@@ -6,6 +6,8 @@ local notifier = require "tracker.TrackerAPI.Notifier"
 ---@field session_id string
 ---@field active_project string
 ---@field persistor PersistencyAPI
+---@field cleanup_session_files_on_session_end boolean
+---@field cleanup_log_files_on_session_end boolean
 ---@field session_name string
 ---@field timer_to_save number
 ---@field timer_to_log number
@@ -15,6 +17,7 @@ local notifier = require "tracker.TrackerAPI.Notifier"
 ---@field is_running boolean
 ---@field runned_for number
 ---@field cleanup_session_files_frequency number
+---@field cleanup_log_files_frequency number
 ---@field will_be_deleted_on osdate|string
 ---@field has_timer_started boolean
 ---@field allow_notifications boolean
@@ -34,8 +37,12 @@ function TrackerAPI:initialize(opts)
     self.session_id = defaults.session_id
     self.session_name = defaults.session_name
     self.will_be_deleted_on = defaults.will_be_deleted_on
-    self.cleanup_session_files_frequency = opts.cleanup_session_files_frequency or 7
+    self.cleanup_session_files_frequency = opts.cleanup_session_files_frequency or 2
+    self.cleanup_log_files_frequency_files_frequency = opts.cleanup_session_files_frequency or 2
+    self.cleanup_log_files_on_session_end = opts.cleanup_log_files_on_session_end or false
+    self.cleanup_session_files_on_session_end = opts.cleanup_session_files_on_session_end or false
     self.save_session_data_frequency = opts.save_session_data_frequency or 20
+    self.cleanup_session_files_frequency = opts.cleanup_session_files_frequency
     self.events = events_configs
     self.event_debounce_time = opts.event_debounce_time
     self.is_running = true

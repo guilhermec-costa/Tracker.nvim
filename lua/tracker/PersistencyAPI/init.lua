@@ -9,7 +9,6 @@ local PersistencyAPI = {}
 local log_date_format = "%Y/%m/%d %H:%M:%S"
 PersistencyAPI.__index = PersistencyAPI
 
-
 ---@param tracker_session Tracker
 ---@param opts table|nil
 ---@return PersistencyAPI
@@ -58,9 +57,10 @@ function PersistencyAPI:save_session_data_to_json_file()
 end
 
 function PersistencyAPI:remove_session_file(filepath)
+    print(filepath)
     local file_exists = os.execute('[ -f "' .. filepath .. '" ]')
     if file_exists ~= 0 then
-        print("File does not exist")
+        self:create_log('File "' .. filepath .. '" does not exist')
         return 0
     end
 
@@ -69,17 +69,54 @@ function PersistencyAPI:remove_session_file(filepath)
     return 1
 end
 
-function PersistencyAPI:start_cleaning_process()
+function PersistencyAPI:clear_session_files()
     local current_date = os.date("%Y_%m_%d")
-    local limit_in_days_for_session_file_to_expire = self.session.Session.cleanup_session_files_frequency
-    local session_files = io.popen("find " .. self.persistence_location .. current_date .. " -type f -mtime +" ..
-        tostring(limit_in_days_for_session_file_to_expire))
-
+    local session_files = io.popen("find " .. self.persistence_location .. current_date .. "/")
     if session_files ~= nil then
         for filepath in session_files:lines() do
             self:remove_session_file(filepath)
         end
     end
+end
+
+function PersistencyAPI:clear_log_files()
+    local current_date = os.date("%Y_%m_%d")
+    local session_files = io.popen("find " .. self.logs_location .. current_date .. "/")
+    if session_files ~= nil then
+        for filepath in session_files:lines() do
+            print(filepath)
+            self:remove_session_file(filepath)
+        end
+    end
+end
+
+function PersistencyAPI:clear_session_files_based_on_time_deletion()
+    local current_date = os.date("%Y_%m_%d")
+    local limit_in_days_for_session_files_to_expire = self.session.Session.cleanup_session_files_frequency
+    local session_files = io.popen("find " .. self.persistence_location .. current_date .. " -type f -mtime +" ..
+        tostring(limit_in_days_for_session_files_to_expire))
+    if session_files ~= nil then
+        for filepath in session_files:lines() do
+            self:remove_session_file(filepath)
+        end
+    end
+end
+
+function PersistencyAPI:clear_log_files_based_on_time_deletion()
+    local current_date = os.date("%Y_%m_%d")
+    local limit_in_days_for_log_files_to_expire = self.session.Session.cleanup_log_files_frequency
+    local logs_files = io.popen("find " .. self.logs_location .. current_date .. " -type f -mtime +" ..
+        tostring(limit_in_days_for_log_files_to_expire))
+    if logs_files ~= nil then
+        for filepath in logs_files:lines() do
+            self:remove_session_file(filepath)
+        end
+    end
+end
+
+function PersistencyAPI:start_cleaning_process()
+    self:clear_session_files_based_on_time_deletion()
+    self:clear_log_files_based_on_time_deletion()
 end
 
 ---@param filepath string
@@ -91,7 +128,7 @@ function PersistencyAPI:get_session_data_from_file(filepath)
         local file_content = io.read("l")
         return file_content
     else
-        print("File does not exist")
+        self:create_log('File "' .. filepath .. '" does not exist')
     end
 end
 
