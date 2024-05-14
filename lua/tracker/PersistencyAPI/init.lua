@@ -1,3 +1,9 @@
+local pickers = require "telescope.pickers"
+local finders = require "telescope.finders"
+local conf = require "telescope.config".values
+local previewers = require "telescope.previewers"
+
+
 local json = require "tracker.json"
 ---@class PersistencyAPI
 ---@field session Tracker
@@ -30,6 +36,7 @@ function PersistencyAPI:initialize(opts)
 end
 
 function PersistencyAPI:setup_persistence_structure()
+    self:create_log(self.session.Session:get_tracker_ascii())
     local current_date = os.date("%Y_%m_%d")
     local day_folder_exists = os.execute('[ -d "' .. self.persistence_location .. current_date .. '" ]')
 
@@ -169,6 +176,31 @@ function PersistencyAPI:clear_logs()
     self.accumulated_logs = {}
     self:create_log('Internal logs from session "' ..
         self.session.Session.session_name .. '" were cleaned on ' .. os.date(log_date_format))
+end
+
+function PersistencyAPI:session_files_picker(opts)
+    local results = {}
+    local session_files = io.popen("find " .. self.persistence_location)
+    if session_files then
+        for file in session_files:lines() do
+            if string.match(file, ".json$") then
+                table.insert(results, file)
+            end
+        end
+    end
+
+    pickers.new(opts, {
+        prompt_title = "Session Files",
+        finder = finders.new_table {
+            results = results
+        },
+        sorter = conf.generic_sorter(opts),
+        previewer = previewers.new_termopen_previewer({
+            get_command = function(entry, status)
+                return { 'echo ', entry.path }
+            end
+        })
+    }):find()
 end
 
 return PersistencyAPI

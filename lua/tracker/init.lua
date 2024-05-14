@@ -21,7 +21,6 @@ function Tracker.setup(opts)
 
     ---@type PersistencyAPI
     Tracker.Session.persistor = PersistenceAPI.new_persistor(Tracker)
-    Tracker.Session.persistor:create_log(Tracker.Session:get_tracker_ascii())
     Tracker.Session.persistor:create_log("TrackerAPIs have been initialized on " .. os.date(log_date_format))
 
     Tracker.Session.persistor:start_cleaning_process()
