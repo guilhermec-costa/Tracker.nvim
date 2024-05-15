@@ -41,8 +41,7 @@ return {
 ### Tracker setup 
 
 ```lua
-local tracker = require("tracker")
-tracker.setup {
+require('tracker').setup {
     event_debounce_time = 3000,
     allow_notifications = false,
     logs_permission = true,
