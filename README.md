@@ -1,12 +1,16 @@
 # tracker.nvim
 
-Stay in the flow, let Tracker handle the stats.
+Stay in the flow, let Tracker handle the stats 📈
+
+---
+
+Tracker is currently in development ⚠️,  so it still misses some important user-customization features. You can already try it, but don't use it seriously just yet.
 
 ## What is Tracker?
 
-`tracker.nvim` is a feature-rich plugin for Neovim aimed at providing comprehensive tracking and analysis of developer activities within the editor.
-- **Detailed Tracking**: Capture a variety of events including file openings, window switches, executed commands, and more.
-- **Data Analysis**: Analyze the collected data to identify usage patterns, response times, and other useful metrics.
+`tracker.nvim` is a feature-rich plugin for Neovim aimed at providing comprehensive tracking and analysis of developer activities within Neovim.
+- **Detailed Tracking**: Watches a variety of events. Check [Tracker events]()
+- **Data Analysis**: Uses the data collected via the events to make valuable analysis of your perfomance
 - **Flexible Customization**: Customize settings to fit your workflow and individual preferences.
 
 ### Installation
@@ -15,5 +19,34 @@ Using [packer.nvim](https://github.com/wbthomason/packer.nvim)
 ```lua
 use {
   'GuiC0506/Tracker.nvim',
+}
+```
+
+
+Using [lazy.nvim](https://github.com/folke/lazy.nvim)
+```lua
+-- init.lua:
+{
+    'GuiC0506/Tracker.nvim',
+}
+
+-- plugins/telescope.lua:
+return {
+    'nvim-telescope/telescope.nvim', tag = '0.1.6',
+-- or                              , branch = '0.1.x',
+      dependencies = { 'nvim-lua/plenary.nvim' }
+    }
+```
+
+### Tracker setup 
+
+```lua
+local tracker = require("tracker")
+tracker.setup {
+    event_debounce_time = 3000,
+    allow_notifications = false,
+    logs_permission = true,
+    cleanup_session_files_on_session_end = false,
+    cleanup_log_files_on_session_end = false
 }
 ```
