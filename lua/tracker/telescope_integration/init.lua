@@ -63,9 +63,8 @@ function telescope_integration.session_files_picker(opts, tracker_session, date)
         previewer = previewers.vim_buffer_cat.new({}),
         attach_mappings = function(prompt_bufnr, map)
             actions.select_default:replace(function()
-                actions.close(prompt_bufnr)
                 local selection = action_state.get_selected_entry()[1]
-                vim.api.nvim_command("Telescope tracker commands")
+                print(selection)
             end)
             return true
         end
