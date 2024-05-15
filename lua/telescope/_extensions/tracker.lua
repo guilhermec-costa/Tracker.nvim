@@ -10,7 +10,7 @@ return require("telescope").register_extension {
             require "tracker.telescope_integration".day_folders_picker({}, tracker)
         end,
         session_files = function()
-            require "tracker.telescope_integration".session_files_picker()
+            require "tracker.telescope_integration".session_files_picker({}, tracker)
         end
     },
 }
