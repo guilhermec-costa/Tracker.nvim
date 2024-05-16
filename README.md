@@ -75,7 +75,7 @@ Tracker.nvim provides several commands to interact with the plugin. Here is the 
 
 Tracker commands:
 
-| Event                           | Description                                             |
+| Command                         | Description                                             |
 | ------------------------------- | ------------------------------------------------------- |
 | `TrackerPauseTimer`             | Pauses the Tracker timer                                |
 | `TrackerResumeTimer`            | Resumes the Tracker timer                                |
