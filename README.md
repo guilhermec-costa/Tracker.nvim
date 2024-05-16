@@ -68,3 +68,22 @@ require('tracker').setup {
     cleanup_log_files_frequency = 7
 }
 ```
+
+## Commands
+
+Tracker.nvim provides several commands to interact with the plugin. Here is the list of available commands along with their descriptions:
+
+Tracker commands:
+
+| Command                         | Description                                             |
+| ------------------------------- | ------------------------------------------------------- |
+| `TrackerPauseTimer`             | Pauses the Tracker timer                                |
+| `TrackerResumeTimer`            | Resumes the Tracker timer                                |
+| `TrackerResetTimer`             | Resets the Tracker timer                                |
+| `TrackerGetActiveEvents`        | List the events that Tracker watches |
+| `TrackerSaveSession`            | Save data from the current session |
+| `TrackerClearSessionFiles`      | Clear all session files from the persistence location |
+| `TrackerClearLogFiles`          | Clear all the log files within the persistence location |
+| `TrackerFilepathOverview`       | List buffers overview |
+| `TrackerFiletypeOverview`       | List filetype overview |
+| `TrackerProjectOverview`        | List project overview |

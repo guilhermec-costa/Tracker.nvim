@@ -57,7 +57,6 @@ local commands = {
     TrackerResumeTimer = { action = resume_timer },
     TrackerResetTimer = { action = reset_timer },
     TrackerGetActiveEvents = { action = get_active_events_ext },
-    TrackerGetInactiveEvents = { action = get_inactive_events_ext },
     TrackerSaveSession = { action = save_session_data },
     TrackerClearSessionFiles = { action = clear_session_files },
     TrackerClearLogFiles = { action = clear_log_files },
