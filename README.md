@@ -1,5 +1,7 @@
 # tracker.nvim
 
+[![Lua](https://img.shields.io/badge/Lua-blue.svg?style=for-the-badge&logo=lua)](http://www.lua.org)
+
 Stay in the flow, let Tracker handle the stats 📈
 
 ---
@@ -78,12 +80,24 @@ Tracker commands:
 | Command                         | Description                                             |
 | ------------------------------- | ------------------------------------------------------- |
 | `TrackerPauseTimer`             | Pauses the Tracker timer                                |
-| `TrackerResumeTimer`            | Resumes the Tracker timer                                |
+| `TrackerResumeTimer`            | Resumes the Tracker timer                               |
 | `TrackerResetTimer`             | Resets the Tracker timer                                |
-| `TrackerGetActiveEvents`        | List the events that Tracker watches |
-| `TrackerSaveSession`            | Save data from the current session |
-| `TrackerClearSessionFiles`      | Clear all session files from the persistence location |
+| `TrackerGetActiveEvents`        | List the events that Tracker watches                    |
+| `TrackerSaveSession`            | Save data from the current session                      |
+| `TrackerClearSessionFiles`      | Clear all session files from the persistence location   |
 | `TrackerClearLogFiles`          | Clear all the log files within the persistence location |
-| `TrackerFilepathOverview`       | List buffers overview |
-| `TrackerFiletypeOverview`       | List filetype overview |
-| `TrackerProjectOverview`        | List project overview |
+| `TrackerFilepathOverview`       | List buffers overview                                   |
+| `TrackerFiletypeOverview`       | List filetype overview                                  |
+| `TrackerProjectOverview`        | List project overview                                   |
+
+## Telescope integration
+```viml
+" Show all Tracker available commands
+
+:Telescope tracker commands
+
+" Show all Tracker available commands
+:Telescope tracker day_folders
+
+```
+
