@@ -97,7 +97,10 @@ Tracker commands:
 :Telescope tracker commands
 
 " Show all Tracker available commands
-:Telescope tracker day_folders
+:Telescope tracker days
+
+" Will trigger a vim date input (YYYY_MM_DD)
+:Telescope tracker sessions
 
 ```
 
