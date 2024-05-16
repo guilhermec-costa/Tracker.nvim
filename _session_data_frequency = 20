@@ -74,87 +74,17 @@ require('tracker').setup {
 
 Tracker.nvim provides several commands to interact with the plugin. Here is the list of available commands along with their descriptions:
 
-### TrackerPauseTimer
-Pauses the tracking timer.
-```lua
-TrackerPauseTimer = { action = pause_timer }
+Tracker commands:
 
-TrackerResumeTimer
-
-Resumes the tracking timer after it has been paused.
-
-lua
-
-TrackerResumeTimer = { action = resume_timer }
-
-TrackerResetTimer
-
-Resets the tracking timer to zero.
-
-lua
-
-TrackerResetTimer = { action = reset_timer }
-
-TrackerGetActiveEvents
-
-Displays a list of currently active tracking events.
-
-lua
-
-TrackerGetActiveEvents = { action = get_active_events_ext }
-
-TrackerGetInactiveEvents
-
-Displays a list of currently inactive tracking events.
-
-lua
-
-TrackerGetInactiveEvents = { action = get_inactive_events_ext }
-
-TrackerSaveSession
-
-Saves the current session data to a file.
-
-lua
-
-TrackerSaveSession = { action = save_session_data }
-
-TrackerClearSessionFiles
-
-Clears all saved session files.
-
-lua
-
-TrackerClearSessionFiles = { action = clear_session_files }
-
-TrackerClearLogFiles
-
-Clears all saved log files.
-
-lua
-
-TrackerClearLogFiles = { action = clear_log_files }
-
-TrackerFilepathOverview
-
-Provides an overview of the tracking data aggregated by file path.
-
-lua
-
-TrackerFilepathOverview = { action = overview_by_filepath }
-
-TrackerFiletypeOverview
-
-Provides an overview of the tracking data aggregated by file type.
-
-lua
-
-TrackerFiletypeOverview = { action = overview_by_filetype }
-
-TrackerProjectOverview
-
-Provides an overview of the tracking data aggregated by project.
-
-lua
-
-TrackerProjectOverview = { action = project_overview }
+| Event                           | Description                                             |
+| ------------------------------- | ------------------------------------------------------- |
+| `TrackerPauseTimer`             | Pauses the Tracker timer                                |
+| `TrackerResumeTimer`            | Resumes the Tracker timer                                |
+| `TrackerResetTimer`             | Resets the Tracker timer                                |
+| `TrackerGetActiveEvents`        | List the events that Tracker watches |
+| `TrackerSaveSession`            | Save data from the current session |
+| `TrackerClearSessionFiles`      | Clear all session files from the persistence location |
+| `TrackerClearLogFiles`          | Clear all the log files within the persistence location |
+| `TrackerFilepathOverview`       | List buffers overview |
+| `TrackerFiletypeOverview`       | List filetype overview |
+| `TrackerProjectOverview`        | List project overview |
