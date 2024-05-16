@@ -48,6 +48,7 @@ event_handler.handle_buf_enter = function(data)
         filepath_aggregator[bufname].yanked = 0
         filepath_aggregator[bufname].saved = 0
         filepath_aggregator[bufname].mode_change = {}
+        filepath_aggregator[bufname].mode_change.value = 0
         filepath_aggregator[bufname].mode_change.by_mode = {}
     end
 
@@ -67,6 +68,7 @@ event_handler.handle_buf_enter = function(data)
         filetype_aggregator[bufext].yanked = 0
         filetype_aggregator[bufext].saved = 0
         filetype_aggregator[bufext].mode_change = {}
+        filetype_aggregator[bufext].mode_change.value = 0
         filetype_aggregator[bufext].mode_change.by_mode = {}
     end
 
@@ -202,53 +204,6 @@ end
 
 ---@param data Tracker
 ---@return nil
-event_handler.handle_buf_add = function(data)
-    local bufext = vim.fn.expand("%:e")
-    local project_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.project
-    local filetype_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filetype
-
-    if bufext == "" or bufext == "netrw" then
-        return
-    end
-
-    if filetype_aggregator[bufext] == nil then
-        data.Aggregator:add_aggregator({
-            aggregator_name = bufext,
-            aggregator_path = "session_scoped.buffers.aggregators.filetype"
-        })
-    end
-
-    increment_key_by_aggregator(project_aggregator, "buffers_added")
-    increment_key_by_aggregator(filetype_aggregator[bufext], "buffers_added")
-    data.Session.persistor:create_log("Added buffer on " .. tostring(os.date(log_date_format)))
-end
-
----@param data Tracker
----@return nil
-event_handler.handle_buf_delete = function(data)
-    local bufext = vim.fn.expand("%:e")
-
-    local project_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.project
-    local filetype_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filetype
-
-    if bufext == "" or bufext == "netrw" then
-        return
-    end
-
-    if filetype_aggregator[bufext] == nil then
-        data.Aggregator:add_aggregator({
-            aggregator_name = bufext,
-            aggregator_path = "session_scoped.buffers.aggregators.filetype"
-        })
-    end
-
-    increment_key_by_aggregator(project_aggregator, "buffers_deleted")
-    increment_key_by_aggregator(filetype_aggregator[bufext], "buffers_deleted")
-    data.Session.persistor:create_log("Deleted buffer on " .. tostring(os.date(log_date_format)))
-end
-
----@param data Tracker
----@return nil
 event_handler.handle_recorded_macro = function(data)
     local bufname = vim.fn.expand("%")
     local bufext = vim.fn.expand("%:e")
@@ -305,6 +260,7 @@ event_handler.handle_vim_enter = function(data)
     project_aggregator.saved = 0
     project_aggregator.colorscheme_change = 0
     project_aggregator.mode_change = {}
+    project_aggregator.mode_change.value = 0
     project_aggregator.mode_change.by_mode = {}
 end
 
