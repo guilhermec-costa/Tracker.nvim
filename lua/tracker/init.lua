@@ -20,7 +20,7 @@ function Tracker.setup(opts)
     Tracker.Aggregator = AggregatorAPI.new_aggregator(Tracker)
 
     ---@type PersistencyAPI
-    Tracker.Session.persistor = PersistenceAPI.new_persistor(Tracker)
+    Tracker.Session.persistor = PersistenceAPI.new_persistor(Tracker, opts)
     Tracker.Session.persistor:create_log("TrackerAPIs have been initialized on " .. os.date(log_date_format))
 
     Tracker.Session.persistor:start_cleaning_process()

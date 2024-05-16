@@ -1,12 +1,5 @@
-local pickers = require "telescope.pickers"
-local finders = require "telescope.finders"
-local conf = require "telescope.config".values
-local actions = require "telescope.actions"
-local action_state = require "telescope.actions.state"
-local previewers = require "telescope.previewers"
-
-
 local json = require "tracker.json"
+
 ---@class PersistencyAPI
 ---@field session Tracker
 ---@field persistence_location string
@@ -30,8 +23,14 @@ end
 ---@param opts table|nil
 function PersistencyAPI:initialize(opts)
     opts = opts or {}
-    self.persistence_location = opts.persistence_location or os.getenv("HOME") .. "/.config/tracker/data/"
-    self.logs_location = opts.logs_location or os.getenv("HOME") .. "/.config/tracker/logs/"
+    if opts.persistence_location then
+        self.persistence_location = opts.persistence_location .. "data/"
+        self.logs_location = opts.persistence_location .. "logs/"
+    else
+        self.persistence_location = os.getenv("HOME") .. "/.config/tracker/data/"
+        self.logs_location = os.getenv("HOME") .. "/.config/tracker/logs/"
+    end
+
     self.logs_permission = self.session.Session.logs_permission or false
     self.accumulated_logs = {}
     self:setup_persistence_structure()
@@ -56,7 +55,7 @@ function PersistencyAPI:save_session_data_to_json_file()
     local current_date = os.date("%Y_%m_%d")
     local buffers_overview = self.session.Aggregator:prepare_data_for_json_file()
     local stringified_agg = json.encode(buffers_overview)
-    local file = io.open(
+    local file, err_message, err_number = io.open(
         self.persistence_location .. current_date .. "/" .. self.session.Session.session_name .. ".json", "w")
 
     if file then
@@ -70,7 +69,6 @@ function PersistencyAPI:save_session_data_to_json_file()
 end
 
 function PersistencyAPI:remove_session_file(filepath)
-    print(filepath)
     local file_exists = os.execute('[ -f "' .. filepath .. '" ]')
     if file_exists ~= 0 then
         self:create_log('File "' .. filepath .. '" does not exist')
@@ -97,7 +95,6 @@ function PersistencyAPI:clear_log_files()
     local session_files = io.popen("find " .. self.logs_location .. current_date .. "/")
     if session_files ~= nil then
         for filepath in session_files:lines() do
-            print(filepath)
             self:remove_session_file(filepath)
         end
     end
@@ -105,7 +102,7 @@ end
 
 function PersistencyAPI:clear_session_files_based_on_time_deletion()
     local current_date = os.date("%Y_%m_%d")
-    local limit_in_days_for_session_files_to_expire = self.session.Session.cleanup_session_files_frequency
+    local limit_in_days_for_session_files_to_expire = self.session.Session.cleanup_session_files_frequency or 0
     local session_files = io.popen("find " .. self.persistence_location .. current_date .. " -type f -mtime +" ..
         tostring(limit_in_days_for_session_files_to_expire))
     if session_files ~= nil then

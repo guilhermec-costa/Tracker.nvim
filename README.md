@@ -40,10 +40,24 @@ return {
 
 ```lua
 require('tracker').setup {
-    event_debounce_time = 3000,
-    allow_notifications = false,
+    
+    -- time, in seconds, between each timer increment
+    timer_delay = 3000,
+
+    -- if Tracker should store logs about the tracking process
     logs_permission = true,
+    
+    -- if Tracker should delete all session files on the end of a vim session
     cleanup_session_files_on_session_end = false,
-    cleanup_log_files_on_session_end = false
+
+    -- if Tracker should delete all log files on the end of a vim session
+    cleanup_log_files_on_session_end = true 
+    
+    -- the location where Tracker will store the session data and logs
+    persistence_location = "foo/bar/"
+
+    -- the frequency which the session data files are going to be deleted
+    -- the files would be deletd the next time you enter vim, and 'x' days have passed
+    cleanup_session_files_frequency = 7
 }
 ```

@@ -44,7 +44,7 @@ function TrackerAPI:initialize(opts)
     self.save_session_data_frequency = opts.save_session_data_frequency or 20
     self.cleanup_session_files_frequency = opts.cleanup_session_files_frequency
     self.events = events_configs
-    self.event_debounce_time = opts.event_debounce_time
+    self.event_debounce_time = opts.timer_delay or 3000
     self.is_running = true
     self.logs_permission = opts.logs_permission or false
     self.runned_for = 0
@@ -94,7 +94,7 @@ end
 
 ---@param debounce number|nil
 function TrackerAPI:start_timer(debounce)
-    debounce = debounce or 5000
+    debounce = debounce or 3000
     local timer = vim.loop.new_timer()
     self.timer = timer
     if self.has_timer_started == false then
