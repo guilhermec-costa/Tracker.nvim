@@ -1,28 +1,70 @@
-local function get_inactive_events_ext()
+local P = require "tracker.utils".P
+
+---@return Tracker
+local function get_tracker_session()
     ---@type Tracker
     local tracker = require 'tracker'
-    print(vim.inspect(tracker.Session:get_inactive_events()))
+    return tracker
+end
+
+local function get_inactive_events_ext()
+    P(get_tracker_session().Session:get_inactive_events())
+end
+
+local function overview_by_filetype()
+    P(get_tracker_session().Aggregator:overview_by_filetype())
+end
+
+local function overview_by_filepath()
+    P(get_tracker_session().Aggregator:overview_by_buffer())
+end
+
+local function project_overview()
+    P(get_tracker_session().Aggregator:project_overview())
 end
 
 local function get_active_events_ext()
     ---@type Tracker
-    local tracker = require 'tracker'
-    print(vim.inspect(tracker.Session:get_active_events()))
+    P(get_tracker_session().Session:get_active_events())
 end
 
 local function save_session_data()
-    ---@type Tracker
-    local tracker = require 'tracker'
-    tracker.Session.persistor:save_session_data_to_json_file()
+    get_tracker_session().Session.persistor:save_session_data_to_json_file()
+end
+
+local function pause_timer()
+    get_tracker_session().Session:pause_timer()
+end
+
+local function resume_timer()
+    get_tracker_session().Session:resume_timer()
+end
+
+local function reset_timer()
+    get_tracker_session().Session:reset_timer()
+end
+
+local function clear_session_files()
+    get_tracker_session().Session.persistor:clear_session_files()
+end
+
+local function clear_log_files()
+    get_tracker_session().Session.persistor:clear_log_files()
 end
 
 local commands = {
-    TrackerPauseTimer = { action = "lua require('tracker').Session:pause_timer()" },
-    TrackerResumeTimer = { action = "lua require('tracker').Session:resume_timer()" },
-    TrackerResetTimer = { action = "lua require('tracker').Session:reset_timer()" },
+    TrackerPauseTimer = { action = pause_timer },
+    TrackerResumeTimer = { action = resume_timer },
+    TrackerResetTimer = { action = reset_timer },
     TrackerGetActiveEvents = { action = get_active_events_ext },
     TrackerGetInactiveEvents = { action = get_inactive_events_ext },
-    TrackerSaveSession = { action = save_session_data }
+    TrackerSaveSession = { action = save_session_data },
+    TrackerClearSessionFiles = { action = clear_session_files },
+    TrackerClearLogFiles = { action = clear_log_files },
+    TrackerFilepathOverview = { action = overview_by_filepath },
+    TrackerFiletypeOverview = { action = overview_by_filetype },
+    TrackerProjectOverview = { action = project_overview }
+
 }
 
 for cmd_name, cmd_opts in pairs(commands) do
