@@ -1,72 +1,73 @@
-local utils = require "tracker.utils"
-local commands = {}
-local pickers = require "telescope.pickers"
-local finders = require "telescope.finders"
-local conf = require("telescope.config").values
-local actions = require "telescope.actions"
-local action_state = require "telescope.actions.state"
+local P = require "tracker.utils".P
 
-local function get_session_aggregators(opts)
-    local args = opts.args or nil
-    local splitted_paths = utils.split_string(args, " ")
-    if #splitted_paths > 0 then
-        local accessors_path_string = ""
-        for i, _ in ipairs(splitted_paths) do
-            accessors_path_string = accessors_path_string .. "['" .. splitted_paths[i] .. "']"
-        end
-        local command = "lua P(require('tracker').Aggregator:get_aggregators().session_scoped.buffers.aggregators" ..
-            accessors_path_string .. ")"
-        pcall(vim.api.nvim_command, command)
-    else
-        local command = "lua P(require('tracker').Aggregator:get_aggregators().session_scoped.buffers.aggregators)"
-        pcall(vim.api.nvim_command, command)
-    end
+---@return Tracker
+local function get_tracker_session()
+    ---@type Tracker
+    local tracker = require 'tracker'
+    return tracker
 end
 
-local tracker_commands = {
-    TrackerPauseTimer = { action = "lua require('tracker').Session:pause_timer()" },
-    TrackerStartTimer = { action = "lua require('tracker').Session:start_timer()" },
-    TrackerResumeTimer = { action = "lua require('tracker').Session:resume_timer()" },
-    TrackerResetTimer = { action = "lua require('tracker').Session:reset_timer()" },
-    TrackerGetSessionAggregators = { action = get_session_aggregators, opts = { nargs = "?" } },
-    TrackerGetActiveEvents = { action = "lua P(require('tracker').Session:get_active_events())" },
-    TrackerGetInactiveEvents = { action = "lua P(require('tracker').Session:get_inactive_events())" },
-    TrackerGetBuffers = { action = "lua P(require('tracker').Aggregator:get_buffers())" },
-    TrackerBuffersKeystrokes = { action = "lua P(require('tracker').Aggregator:keystrokes_by_buffer())" },
-    TrackerBuffersTime = { action = "lua P(require('tracker').Aggregator:time_by_buffer())" },
-    TrackerBuffersCounter = { action = "lua P(require('tracker').Aggregator:counter_by_buffer())" },
-    TrackerBuffersYanks = { action = "lua P(require('tracker').Aggregator:yanks_by_buffer())" },
-    TrackerBuffersOverview = { action = "lua P(require('tracker').Aggregator:overview_by_buffer())" },
-    TrackerSessionOverview = { action = "lua P(require('tracker').Aggregator:session_overview())" },
+local function get_inactive_events_ext()
+    P(get_tracker_session().Session:get_inactive_events())
+end
+
+local function overview_by_filetype()
+    P(get_tracker_session().Aggregator:overview_by_filetype())
+end
+
+local function overview_by_filepath()
+    P(get_tracker_session().Aggregator:overview_by_buffer())
+end
+
+local function project_overview()
+    P(get_tracker_session().Aggregator:project_overview())
+end
+
+local function get_active_events_ext()
+    ---@type Tracker
+    P(get_tracker_session().Session:get_active_events())
+end
+
+local function save_session_data()
+    get_tracker_session().Session.persistor:save_session_data_to_json_file()
+end
+
+local function pause_timer()
+    get_tracker_session().Session:pause_timer()
+end
+
+local function resume_timer()
+    get_tracker_session().Session:resume_timer()
+end
+
+local function reset_timer()
+    get_tracker_session().Session:reset_timer()
+end
+
+local function clear_session_files()
+    get_tracker_session().Session.persistor:clear_session_files()
+end
+
+local function clear_log_files()
+    get_tracker_session().Session.persistor:clear_log_files()
+end
+
+local commands = {
+    TrackerPauseTimer = { action = pause_timer },
+    TrackerResumeTimer = { action = resume_timer },
+    TrackerResetTimer = { action = reset_timer },
+    TrackerGetActiveEvents = { action = get_active_events_ext },
+    TrackerGetInactiveEvents = { action = get_inactive_events_ext },
+    TrackerSaveSession = { action = save_session_data },
+    TrackerClearSessionFiles = { action = clear_session_files },
+    TrackerClearLogFiles = { action = clear_log_files },
+    TrackerFilepathOverview = { action = overview_by_filepath },
+    TrackerFiletypeOverview = { action = overview_by_filetype },
+    TrackerProjectOverview = { action = project_overview }
+
 }
 
-
-commands.tracker_commands_telescope_ext = function(opts)
-    opts = opts or {}
-    local results = {}
-    for cmd_name, _ in pairs(tracker_commands) do
-        table.insert(results, cmd_name)
-    end
-    pickers.new(opts, {
-        prompt_title = "Tracker Commands",
-        finder = finders.new_table {
-            results = results
-        },
-        sorter = conf.generic_sorter(opts),
-        attach_mappings = function(prompt_bufnr, map)
-            actions.select_default:replace(function()
-                actions.close(prompt_bufnr)
-                local selection = action_state.get_selected_entry()
-                vim.api.nvim_command(tracker_commands[selection[1]].action)
-            end)
-            return true
-        end,
-    }):find()
-end
-
-
-
-for cmd_name, cmd_opts in pairs(tracker_commands) do
+for cmd_name, cmd_opts in pairs(commands) do
     local extra_opts = cmd_opts.opts or {}
     vim.api.nvim_create_user_command(cmd_name, cmd_opts.action, extra_opts)
 end

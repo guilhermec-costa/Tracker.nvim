@@ -33,4 +33,8 @@ utils.calculate_field_percentage = function(dividing, divisor)
     return result
 end
 
+utils.P = function(command)
+    print(vim.inspect(command))
+end
+
 return utils

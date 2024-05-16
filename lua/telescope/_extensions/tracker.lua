@@ -5,7 +5,7 @@ return require("telescope").register_extension {
     setup = function(ext_config, config)
     end,
     exports = {
-        commands = require "tracker.commands".tracker_commands_telescope_ext,
+        commands = require "tracker.telescope_integration".commands,
         day_folders = function()
             require "tracker.telescope_integration".day_folders_picker({}, tracker)
         end,
