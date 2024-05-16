@@ -4,7 +4,7 @@ Stay in the flow, let Tracker handle the stats 📈
 
 ---
 
-Tracker is currently in development ⚠️,  so it still misses some important user-customization features. You can already try it, but don't use it seriously just yet.
+Tracker is currently in development and unstable ⚠️
 
 ## What is Tracker?
 
