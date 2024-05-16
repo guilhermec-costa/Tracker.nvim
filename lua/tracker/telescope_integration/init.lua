@@ -4,6 +4,7 @@ local conf = require "telescope.config".values
 local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 local previewers = require "telescope.previewers"
+local commands = require "tracker.commands"
 
 local telescope_integration = {}
 
@@ -68,6 +69,29 @@ function telescope_integration.session_files_picker(opts, tracker_session, date)
             end)
             return true
         end
+    }):find()
+end
+
+function telescope_integration.commands(opts)
+    opts = opts or {}
+    local results = {}
+    for cmd_name, _ in pairs(commands) do
+        table.insert(results, cmd_name)
+    end
+    pickers.new(opts, {
+        prompt_title = "Tracker Commands",
+        finder = finders.new_table {
+            results = results
+        },
+        sorter = conf.generic_sorter(opts),
+        attach_mappings = function(prompt_bufnr, map)
+            actions.select_default:replace(function()
+                actions.close(prompt_bufnr)
+                local selection = action_state.get_selected_entry()[1]
+                commands[selection].action()
+            end)
+            return true
+        end,
     }):find()
 end
 
