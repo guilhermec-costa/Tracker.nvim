@@ -38,7 +38,7 @@ function TrackerAPI:initialize(opts)
     self.session_name = defaults.session_name
     self.will_be_deleted_on = defaults.will_be_deleted_on
     self.cleanup_session_files_frequency = opts.cleanup_session_files_frequency or 2
-    self.cleanup_log_files_frequency_files_frequency = opts.cleanup_session_files_frequency or 2
+    self.cleanup_log_files_frequency_files_frequency = opts.cleanup_log_files_frequency or 2
     self.cleanup_log_files_on_session_end = opts.cleanup_log_files_on_session_end or false
     self.cleanup_session_files_on_session_end = opts.cleanup_session_files_on_session_end or false
     self.save_session_data_frequency = opts.save_session_data_frequency or 20
