@@ -181,4 +181,12 @@ function PersistencyAPI:clear_logs()
         self.session.Session.session_name .. '" were cleaned on ' .. os.date(log_date_format))
 end
 
+function PersistencyAPI:get_formmated_dashboard_files()
+    local formmatated_filenames = {}
+    for filename, _ in pairs(self.dashboard_files) do
+        table.insert(formmatated_filenames, filename)
+    end
+    return formmatated_filenames
+end
+
 return PersistencyAPI
