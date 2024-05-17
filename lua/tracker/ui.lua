@@ -25,10 +25,6 @@ local function create_window(opts)
         minwidth = width,
         minheight = height,
         borderchars = borderchars,
-        callback = function(_, sel)
-            UI.toggle_menu()
-            vim.cmd("silent! e " .. sel)
-        end
     })
 
     Tracker_win_bufnr = vim.api.nvim_win_get_buf(win_id)
@@ -36,6 +32,13 @@ local function create_window(opts)
         id = win_id,
         bufnr = Tracker_win_bufnr
     }
+end
+
+function UI.edit_entry()
+    local current_line_index = vim.api.nvim_win_get_cursor(Tracker_win_id)[1]
+    local buf_lines = vim.api.nvim_buf_get_lines(Tracker_win_bufnr, 0, -1, false)
+    UI.toggle_menu()
+    vim.cmd("silent! edit " .. buf_lines[current_line_index])
 end
 
 function UI.toggle_menu()
@@ -53,7 +56,6 @@ function UI.toggle_menu()
     Tracker_win_id = win.id
     Tracker_win_bufnr = win.bufnr
 
-    print(vim.api.nvim_win_is_valid(Tracker_win_id))
     vim.api.nvim_win_set_option(Tracker_win_id, "number", true)
     vim.api.nvim_buf_set_name(Tracker_win_bufnr, "tracker-dashboard-menu")
 
@@ -63,6 +65,8 @@ function UI.toggle_menu()
         { silent = true })
     vim.api.nvim_buf_set_keymap(Tracker_win_bufnr, "n", "dd", "<cmd>lua require('tracker.ui').delete_item()<cr>",
         { silent = true })
+
+    vim.api.nvim_buf_set_keymap(Tracker_win_bufnr, "n", "<CR>", "<cmd>lua require ('tracker.ui').edit_entry()<cr>", { silent = true})
 end
 
 function UI.delete_item()
