@@ -2,18 +2,20 @@ local pickers = require "telescope.pickers"
 local finders = require "telescope.finders"
 local conf = require "telescope.config".values
 local actions = require "telescope.actions"
-local entry_display = require("telescope.pickers.entry_display")
 local action_state = require "telescope.actions.state"
 local previewers = require "telescope.previewers"
 local commands = require "tracker.commands"
 
 local telescope_integration = {}
 
----@param tracker_session Tracker
-function telescope_integration.day_folders_picker(opts, tracker_session)
+---@param opts table
+function telescope_integration.day_folders_picker(opts)
+    ---@type PersistencyAPI
+    local persistor = require("tracker").Session.persistor
+
     local results = {}
     local session_files = io.popen("find " ..
-        tracker_session.Session.persistor.persistence_location .. " -mindepth 1 -type d")
+        persistor.persistence_location .. " -mindepth 1 -type d")
 
     if session_files then
         for file in session_files:lines() do
@@ -33,7 +35,7 @@ function telescope_integration.day_folders_picker(opts, tracker_session)
                 actions.close(prompt_bufnr)
                 local selection = action_state.get_selected_entry()[1]
                 local last_folder = vim.fn.fnamemodify(selection, ':t')
-                telescope_integration.session_files_picker({}, tracker_session, last_folder)
+                telescope_integration.session_files_picker({}, last_folder)
             end)
             return true
         end
@@ -41,10 +43,11 @@ function telescope_integration.day_folders_picker(opts, tracker_session)
 end
 
 ---@param opts table|nil
----@param tracker_session Tracker
-function telescope_integration.session_files_picker(opts, tracker_session, date)
+function telescope_integration.session_files_picker(opts, date)
+    ---@type PersistencyAPI
+    local persistor = require("tracker").Session.persistor
     local function handle_mark_logic_on_selection(selection, prompt_bufnr)
-        if selection ~= tracker_session.Session.persistor.last_telescope_session_entry then
+        if selection ~= persistor.last_telescope_session_entry then
             actions.add_selection(prompt_bufnr)
         else
             actions.remove_selection(prompt_bufnr)
@@ -54,7 +57,7 @@ function telescope_integration.session_files_picker(opts, tracker_session, date)
     date = date or vim.fn.input("Enter date (YYYY_MM_DD): ")
     local results = {}
     local session_files = io.popen("find " ..
-        tracker_session.Session.persistor.persistence_location .. date .. " -mindepth 1 -type f")
+        persistor.persistence_location .. date .. " -mindepth 1 -type f")
 
     if session_files then
         for file in session_files:lines() do
@@ -74,23 +77,22 @@ function telescope_integration.session_files_picker(opts, tracker_session, date)
         attach_mappings = function(prompt_bufnr, map)
             actions.select_default:replace(function()
                 local selection = action_state.get_selected_entry()
-                local tracker_persistor = tracker_session.Session.persistor
                 handle_mark_logic_on_selection(selection, prompt_bufnr)
-                tracker_persistor.last_telescope_session_entry = selection[1]
+                persistor.last_telescope_session_entry = selection[1]
 
-                if tracker_persistor.dashboard_files[selection] == nil then
-                    tracker_persistor.dashboard_files[selection[1]] = selection.index
+                if persistor.dashboard_files[selection] == nil then
+                    persistor.dashboard_files[selection[1]] = selection.index
                     return
                 end
 
-                tracker_persistor.dashboard_files[selection[1]] = nil
+                persistor.dashboard_files[selection[1]] = nil
             end)
             return true
         end
     }):find()
 end
 
-function telescope_integration.commands(opts)
+function telescope_integration.commands_picker(opts)
     opts = opts or {}
     local results = {}
     for cmd_name, _ in pairs(commands) do
@@ -110,6 +112,25 @@ function telescope_integration.commands(opts)
             end)
             return true
         end,
+    }):find()
+end
+
+function telescope_integration.dashboard_files_picker(opts)
+    ---@type PersistencyAPI
+    local persistor = require("tracker").Session.persistor
+    opts = opts or {}
+    local results = persistor:get_formmated_dashboard_files()
+
+    pickers.new(opts, {
+        prompt_title = "Dashboard files",
+        finder = finders.new_table {
+            results = results
+        },
+        sorter = conf.generic_sorter(opts),
+        previewer = previewers.vim_buffer_cat.new({}),
+        attach_mappings = function(prompt_bufnr, map)
+            return true
+        end
     }):find()
 end
 
