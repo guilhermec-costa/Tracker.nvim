@@ -6,10 +6,10 @@ return require("telescope").register_extension {
     end,
     exports = {
         commands = require "tracker.telescope_integration".commands,
-        day_folders = function()
+        days = function()
             require "tracker.telescope_integration".day_folders_picker({}, tracker)
         end,
-        session_files = function()
+        sessions = function()
             require "tracker.telescope_integration".session_files_picker({}, tracker)
         end
     },

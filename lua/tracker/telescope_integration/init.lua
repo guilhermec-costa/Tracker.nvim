@@ -2,6 +2,7 @@ local pickers = require "telescope.pickers"
 local finders = require "telescope.finders"
 local conf = require "telescope.config".values
 local actions = require "telescope.actions"
+local entry_display = require("telescope.pickers.entry_display")
 local action_state = require "telescope.actions.state"
 local previewers = require "telescope.previewers"
 local commands = require "tracker.commands"
@@ -40,8 +41,16 @@ function telescope_integration.day_folders_picker(opts, tracker_session)
 end
 
 ---@param opts table|nil
----@param tracker_session any
+---@param tracker_session Tracker
 function telescope_integration.session_files_picker(opts, tracker_session, date)
+    local function handle_mark_logic_on_selection(selection, prompt_bufnr)
+        if selection ~= tracker_session.Session.persistor.last_telescope_session_entry then
+            actions.add_selection(prompt_bufnr)
+        else
+            actions.remove_selection(prompt_bufnr)
+        end
+    end
+
     date = date or vim.fn.input("Enter date (YYYY_MM_DD): ")
     local results = {}
     local session_files = io.popen("find " ..
@@ -58,14 +67,23 @@ function telescope_integration.session_files_picker(opts, tracker_session, date)
     pickers.new(opts, {
         prompt_title = "Session files from " .. date,
         finder = finders.new_table {
-            results = results
+            results = results,
         },
         sorter = conf.generic_sorter(opts),
         previewer = previewers.vim_buffer_cat.new({}),
         attach_mappings = function(prompt_bufnr, map)
             actions.select_default:replace(function()
-                local selection = action_state.get_selected_entry()[1]
-                print(selection)
+                local selection = action_state.get_selected_entry()
+                local tracker_persistor = tracker_session.Session.persistor
+                handle_mark_logic_on_selection(selection, prompt_bufnr)
+                tracker_persistor.last_telescope_session_entry = selection[1]
+
+                if tracker_persistor.dashboard_files[selection] == nil then
+                    tracker_persistor.dashboard_files[selection[1]] = selection.index
+                    return
+                end
+
+                tracker_persistor.dashboard_files[selection[1]] = nil
             end)
             return true
         end

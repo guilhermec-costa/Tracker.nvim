@@ -5,6 +5,8 @@ local json = require "tracker.json"
 ---@field persistence_location string
 ---@field logs_location string
 ---@field accumulated_logs table
+---@field last_telescope_session_entry string
+---@field dashboard_files table<string,nil>
 ---@field logs_permission boolean
 local PersistencyAPI = {}
 local log_date_format = "%Y/%m/%d %H:%M:%S"
@@ -33,6 +35,8 @@ function PersistencyAPI:initialize(opts)
 
     self.logs_permission = self.session.Session.logs_permission or false
     self.accumulated_logs = {}
+    self.last_telescope_session_entry = nil
+    self.dashboard_files = {}
     self:setup_persistence_structure()
 end
 
