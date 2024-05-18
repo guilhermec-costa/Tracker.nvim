@@ -5,8 +5,6 @@ local Tracker_win_bufnr
 
 local UI = {}
 
-vim.keymap.set("n", "<leader>T", "<cmd> lua require('tracker.ui').toggle_menu()<CR>", { silent = true })
-
 local function close_window()
     vim.api.nvim_win_close(Tracker_win_id, true)
     Tracker_win_id = nil
@@ -66,6 +64,7 @@ function UI.toggle_menu()
     Tracker_win_id = win.id
     Tracker_win_bufnr = win.bufnr
     vim.api.nvim_win_set_option(Tracker_win_id, "number", true)
+    vim.api.nvim_buf_set_name(Tracker_win_bufnr, "tracker-dashboard-files")
     vim.api.nvim_buf_set_lines(Tracker_win_bufnr, 0, #persistor:get_formmated_dashboard_files(), false,
         persistor:get_formmated_dashboard_files())
 

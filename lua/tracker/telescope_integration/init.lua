@@ -94,6 +94,7 @@ function telescope_integration.session_files_picker(opts, date)
             actions.select_default:replace(function()
                 local selection = action_state.get_selected_entry()
                 handle_mark_logic_on_selection(selection, prompt_bufnr)
+                actions.move_selection_previous(prompt_bufnr)
                 persistor.last_telescope_session_entry = selection[1]
 
                 if persistor.dashboard_files[selection] == nil then
@@ -131,23 +132,63 @@ function telescope_integration.commands_picker(opts)
     }):find()
 end
 
+local function generate_new_dashboard_finder()
+    ---@type PersistencyAPI
+    local persistor = require("tracker").Session.persistor
+    local results = {}
+    local dashboard_files = persistor:get_formmated_dashboard_files()
+    for _, file in ipairs(dashboard_files) do
+        table.insert(results, file)
+    end
+    return finders.new_table({
+        results = results,
+        entry_maker = function(entry)
+            return {
+                value = entry,
+                display = entry,
+                ordinal = entry,
+            }
+        end,
+    })
+end
+
 function telescope_integration.dashboard_files_picker(opts)
     ---@type PersistencyAPI
     local persistor = require("tracker").Session.persistor
     opts = opts or {}
-    local results = persistor:get_formmated_dashboard_files()
 
     pickers.new(opts, {
         prompt_title = "Dashboard files",
-        finder = finders.new_table {
-            results = results
-        },
+        finder = generate_new_dashboard_finder(),
         sorter = conf.generic_sorter(opts),
         previewer = previewers.vim_buffer_cat.new({}),
         attach_mappings = function(prompt_bufnr, map)
+            local delete_entry = function()
+                local selection = action_state.get_selected_entry()
+                if selection then
+                    local current_picker = action_state.get_current_picker(prompt_bufnr)
+                    persistor.dashboard_files[selection.value] = nil
+                    current_picker:refresh(generate_new_dashboard_finder(), { reset_prompt = true })
+                end
+            end
+
+            map("i", "dd", delete_entry)
+            map("n", "dd", delete_entry)
             return true
-        end
+        end,
     }):find()
+end
+
+function telescope_integration.logs_picker(opts)
+    ---@type PersistencyAPI
+    local persistor = require("tracker").Session.persistor
+
+    opts = opts or {}
+    pickers.new(opts, {
+        prompt_title = "Logs",
+        finder = finders.new_table {
+        }
+    })
 end
 
 return telescope_integration
