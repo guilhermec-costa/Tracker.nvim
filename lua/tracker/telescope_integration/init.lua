@@ -5,6 +5,7 @@ local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 local previewers = require "telescope.previewers"
 local commands = require "tracker.commands"
+local P = require "tracker.utils".P
 
 local telescope_integration = {}
 
@@ -31,6 +32,21 @@ function telescope_integration.day_folders_picker(opts)
         sorter = conf.generic_sorter(opts),
         previewer = previewers.vim_buffer_cat.new({}),
         attach_mappings = function(prompt_bufnr, map)
+            map("n", "<c-p>", function()
+                local selection = action_state.get_selected_entry()
+                local command = string.format("ls %s", selection[1])
+                local file_handler = io.popen(command)
+                if file_handler ~= nil then
+                    for filepath in file_handler:lines() do
+                        if persistor.dashboard_files[filepath] == nil then
+                            persistor.dashboard_files[filepath] = selection.index
+                        end
+                    end
+                end
+            end)
+            map("i", "<c-p>", function()
+                local current_entry = action_state.get_selected_entry()[1]
+            end)
             actions.select_default:replace(function()
                 actions.close(prompt_bufnr)
                 local selection = action_state.get_selected_entry()[1]
