@@ -7,6 +7,7 @@ local json = require "tracker.json"
 ---@field accumulated_logs table
 ---@field last_telescope_session_entry string
 ---@field dashboard_files table<string,nil>
+---@field selected_day_folders table
 ---@field logs_permission boolean
 local PersistencyAPI = {}
 local log_date_format = "%Y/%m/%d %H:%M:%S"
@@ -37,6 +38,7 @@ function PersistencyAPI:initialize(opts)
     self.accumulated_logs = {}
     self.last_telescope_session_entry = nil
     self.dashboard_files = {}
+    self.selected_day_folders = {}
     self:setup_persistence_structure()
 end
 
@@ -187,6 +189,12 @@ function PersistencyAPI:get_formmated_dashboard_files()
         table.insert(formmatated_filenames, filename)
     end
     return formmatated_filenames
+end
+
+function PersistencyAPI:clear_dashboard_files()
+    self.dashboard_files = {}
+    self:create_log("Dashboard files were removed from list")
+    self.session.Session:notify("Dashboard files cleaned", "info")
 end
 
 return PersistencyAPI

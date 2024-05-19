@@ -37,4 +37,14 @@ utils.P = function(command)
     print(vim.inspect(command))
 end
 
+---@param bufnr integer
+---@return integer|nil
+utils.get_win_id_from_buffer = function(bufnr)
+    local win_ids = vim.fn.win_findbuf(bufnr)
+    if #win_ids > 0 then
+        return win_ids[1]
+    end
+    return nil
+end
+
 return utils
