@@ -5,7 +5,6 @@ local PersistenceAPI = require "tracker.PersistencyAPI"
 local log_date_format = "%Y/%m/%d %H:%M:%S"
 
 require "tracker.commands"
-require "tracker.ui"
 
 ---@class Tracker
 local Tracker = {}
