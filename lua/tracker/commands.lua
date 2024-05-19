@@ -11,6 +11,10 @@ local function get_inactive_events_ext()
     P(get_tracker_session().Session:get_inactive_events())
 end
 
+local function clear_dashboard_files()
+    get_tracker_session().Session.persistor:clear_dashboard_files()
+end
+
 local function overview_by_filetype()
     P(get_tracker_session().Aggregator:overview_by_filetype())
 end
@@ -62,8 +66,8 @@ local commands = {
     TrackerClearLogFiles = { action = clear_log_files },
     TrackerFilepathOverview = { action = overview_by_filepath },
     TrackerFiletypeOverview = { action = overview_by_filetype },
-    TrackerProjectOverview = { action = project_overview }
-
+    TrackerProjectOverview = { action = project_overview },
+    TrackerClearDashboardFiles = { action = clear_dashboard_files }
 }
 
 for cmd_name, cmd_opts in pairs(commands) do
