@@ -1,4 +1,4 @@
-local telescope_integration = require "tracker.telescope_integration"
+local telescope_integration = require "telescope._extensions.integration"
 
 return require("telescope").register_extension {
     exports = setmetatable({
