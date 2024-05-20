@@ -30,11 +30,15 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim)
 -- init.lua:
 {
     'GuiC0506/Tracker.nvim',
+    requires = {
+        {'nvim-telescope/telescope.nvim'}
+    }
 }
 
 -- plugins/telescope.lua:
 return {
     'GuiC0506/Tracker.nvim',
+        dependencies = { 'nvim-telescope/telescope.nvim' }
     }
 ```
 
@@ -91,6 +95,7 @@ Tracker commands:
 | `TrackerProjectOverview`        | List project overview                                   |
 
 ## Telescope integration
+`Tracker.nvim` provides some built
 ```viml
 " Show all Tracker available commands
 
