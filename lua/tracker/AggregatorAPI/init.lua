@@ -129,6 +129,11 @@ function AggregatorAPI:saves_by_buffer()
     return self:__extract_information_from_buf("saved")
 end
 
+---@param data table
+---@return nil
+function AggregatorAPI:aggregate_files(data)
+end
+
 ---@return table<string, table<string, number>>
 function AggregatorAPI:overview_by_buffer()
     local output = {}
