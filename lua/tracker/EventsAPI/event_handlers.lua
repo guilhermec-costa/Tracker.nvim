@@ -19,7 +19,6 @@ end
 event_handler.handle_buf_enter = function(data)
     local bufname = vim.fn.expand("%")
     local bufext = vim.fn.expand("%:e")
-    local bufnr = vim.api.nvim_get_current_buf()
 
     local project_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.project
     local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
@@ -34,42 +33,20 @@ event_handler.handle_buf_enter = function(data)
             aggregator_name = bufname,
             aggregator_path = "session_scoped.buffers.aggregators.filepath"
         })
+        data.Aggregator:__set_aggregator_metadata(filepath_aggregator[bufname]);
+        data.Aggregator:__generate_default_aggregator_values(filepath_aggregator[bufname])
+    end
 
-
-        filepath_aggregator[bufname].metadata = {
-            name = bufname,
-            filetype = bufext,
-            bufnr = bufnr
-        }
-
-        filepath_aggregator[bufname].timer = 0
-        filepath_aggregator[bufname].counter = 0
-        filepath_aggregator[bufname].keystrokes = 0
-        filepath_aggregator[bufname].yanked = 0
-        filepath_aggregator[bufname].saved = 0
-        filepath_aggregator[bufname].mode_change = {}
-        filepath_aggregator[bufname].mode_change.value = 0
-        filepath_aggregator[bufname].mode_change.by_mode = {}
+    if bufext == "" then
+        return
     end
 
     if filetype_aggregator[bufext] == nil then
-        if bufext == "" then
-            return
-        end
-
         data.Aggregator:add_aggregator({
             aggregator_name = bufext,
             aggregator_path = "session_scoped.buffers.aggregators.filetype"
         })
-
-        filetype_aggregator[bufext].timer = 0
-        filetype_aggregator[bufext].counter = 0
-        filetype_aggregator[bufext].keystrokes = 0
-        filetype_aggregator[bufext].yanked = 0
-        filetype_aggregator[bufext].saved = 0
-        filetype_aggregator[bufext].mode_change = {}
-        filetype_aggregator[bufext].mode_change.value = 0
-        filetype_aggregator[bufext].mode_change.by_mode = {}
+        data.Aggregator:__generate_default_aggregator_values(filetype_aggregator[bufext])
     end
 
     filepath_aggregator[bufname].counter = filepath_aggregator[bufname].counter + 1
@@ -92,6 +69,7 @@ end
 ---@return nil
 event_handler.handle_buf_leave = function(data)
     local bufname = vim.fn.expand("%")
+    local bufext = vim.fn.expand("%:e")
     local filepath_aggregator = data.Aggregator.Data.session_scoped.buffers.aggregators.filepath
 
     if bufname == "" or bufname == "." then

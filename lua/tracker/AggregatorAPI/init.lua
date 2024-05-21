@@ -105,6 +105,29 @@ function AggregatorAPI:__extract_information_from_buf(aggregator_key)
     return output
 end
 
+---@param agg table<string, any>
+function AggregatorAPI:__generate_default_aggregator_values(agg)
+    agg.timer = 0
+    agg.counter = 0
+    agg.keystrokes = 0
+    agg.yanked = 0
+    agg.saved = 0
+    agg.mode_change = {}
+    agg.mode_change.value = 0
+    agg.mode_change.by_mode = {}
+end
+
+function AggregatorAPI:__set_aggregator_metadata(aggregator)
+    local bufname = vim.fn.expand("%")
+    local bufext = vim.fn.expand("%:e")
+    local bufnr = vim.api.nvim_get_current_buf()
+    aggregator.metadata = {
+        name = bufname,
+        filetype = bufext,
+        bufnr = bufnr
+    }
+end
+
 ---@return table<string, number>
 function AggregatorAPI:keystrokes_by_buffer()
     return self:__extract_information_from_buf("keystrokes")
