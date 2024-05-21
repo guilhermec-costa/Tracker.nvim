@@ -1,4 +1,5 @@
 local json = require "tracker.json"
+local utils = require "tracker.utils"
 
 ---@class PersistencyAPI
 ---@field session Tracker
@@ -7,6 +8,7 @@ local json = require "tracker.json"
 ---@field accumulated_logs table
 ---@field last_telescope_session_entry string
 ---@field dashboard_files table<string,nil>
+---@ffield dashboard_files_content table<string, string>
 ---@field selected_day_folders table
 ---@field logs_permission boolean
 local PersistencyAPI = {}
@@ -21,6 +23,31 @@ function PersistencyAPI.new_persistor(tracker_session, opts)
     self.session = tracker_session
     self:initialize(opts)
     return self
+end
+
+function PersistencyAPI:__set_dashboards_files_metadata()
+    local metatable = {
+        __index = function(table, key)
+            return rawget(self.dashboard_files, key)
+        end,
+
+        __newindex = function(table, key, value)
+            self:read_file_content(key)
+        end
+    }
+
+    setmetatable(self.dashboard_files, metatable)
+end
+
+---@param filepath string
+function PersistencyAPI:read_file_content(filepath)
+    local file = io.open(filepath, "r")
+    if not file then
+        return
+    end
+
+    self.dashboard_files_content[filepath] = file:read("a")
+    file:close()
 end
 
 ---@param opts table|nil
@@ -38,6 +65,8 @@ function PersistencyAPI:initialize(opts)
     self.accumulated_logs = {}
     self.last_telescope_session_entry = nil
     self.dashboard_files = {}
+    self:__set_dashboards_files_metadata()
+    self.dashboard_files_content = {}
     self.selected_day_folders = {}
     self:setup_persistence_structure()
 end
