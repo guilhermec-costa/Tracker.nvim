@@ -27,27 +27,61 @@ end
 
 function PersistencyAPI:__set_dashboards_files_metadata()
     local metatable = {
-        __index = function(table, key)
-            return rawget(self.dashboard_files, key)
-        end,
-
         __newindex = function(table, key, value)
-            self:read_file_content(key)
+            self:read_file_content_async(key, function(content)
+                self.dashboard_files_content[key] = content
+            end)
+            rawset(table, key, value)
         end
     }
 
-    setmetatable(self.dashboard_files, metatable)
+    setmetatable(self.dashboard_files_content, metatable)
 end
 
 ---@param filepath string
-function PersistencyAPI:read_file_content(filepath)
+function PersistencyAPI:read_file_sync(filepath)
     local file = io.open(filepath, "r")
     if not file then
         return
     end
 
-    self.dashboard_files_content[filepath] = file:read("a")
+    local content = file:read("a")
     file:close()
+    rawset(self.dashboard_files_content, filepath, content)
+end
+
+function PersistencyAPI:read_file_content_async(filepath, callback)
+    vim.loop.fs_open(filepath, "r", 438, function(err, fd)
+        if err then
+            print("Error opening file: " .. err)
+            return
+        end
+
+        vim.loop.fs_fstat(fd, function(err, stat)
+            if err then
+                print("Error stating file: " .. err)
+                vim.loop.fs_close(fd)
+                return
+            end
+
+            vim.loop.fs_read(fd, stat.size, 0, function(err, data)
+                if err then
+                    print("Error reading file: " .. err)
+                    vim.loop.fs_close(fd)
+                    return
+                end
+
+                vim.loop.fs_close(fd, function(err)
+                    if err then
+                        print("Error closing file: " .. err)
+                        return
+                    end
+
+                    callback(data)
+                end)
+            end)
+        end)
+    end)
 end
 
 ---@param opts table|nil
@@ -65,9 +99,9 @@ function PersistencyAPI:initialize(opts)
     self.accumulated_logs = {}
     self.last_telescope_session_entry = nil
     self.dashboard_files = {}
-    self:__set_dashboards_files_metadata()
     self.dashboard_files_content = {}
     self.selected_day_folders = {}
+    self:__set_dashboards_files_metadata()
     self:setup_persistence_structure()
 end
 
