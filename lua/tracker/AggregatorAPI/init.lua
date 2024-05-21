@@ -1,5 +1,6 @@
 local default_aggregators_config = require "tracker.AggregatorAPI.default_aggregators"
 local utils = require "tracker.utils"
+local log_date_format = "%Y/%m/%d %H:%M:%S"
 
 ---@class AggregatorAPI
 ---@field Data table

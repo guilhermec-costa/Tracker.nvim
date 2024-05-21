@@ -5,7 +5,6 @@ local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 local previewers = require "telescope.previewers"
 local commands = require "tracker.commands"
-local utils = require "tracker.utils"
 
 ---@type PersistencyAPI
 local persistor = require("tracker").Session.persistor
@@ -98,11 +97,10 @@ function telescope_integration.session_files_picker(opts, date)
                 local selection_in_dashboard_files = persistor.dashboard_files[selection[1]]
                 if selection_in_dashboard_files == nil then
                     persistor.dashboard_files[selection[1]] = selection.index
-                    --persistor.dashboard_files_content[selection[1]] = selection.index
                     actions.add_selection(prompt_bufnr)
                 else
                     persistor.dashboard_files[selection[1]] = nil
-                    --persistor.dashboard_files_content[selection[1]] = nil
+                    persistor.dashboard_files_content[selection[1]] = nil
                     actions.remove_selection(prompt_bufnr)
                 end
 
@@ -173,6 +171,7 @@ function telescope_integration.dashboard_files_picker(opts)
                 if selection then
                     local current_picker = action_state.get_current_picker(prompt_bufnr)
                     persistor.dashboard_files[selection.value] = nil
+                    persistor.dashboard_files_content[selection.value] = nil
                     current_picker:refresh(generate_new_dashboard_finder(), { reset_prompt = true })
                 end
             end
