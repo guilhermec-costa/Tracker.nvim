@@ -8,7 +8,9 @@ local utils = require "tracker.utils"
 ---@field accumulated_logs table
 ---@field last_telescope_session_entry string
 ---@field dashboard_files table<string,nil>
----@ffield dashboard_files_content table<string, string>
+---@field dashboard_files_content table<string, string>
+---@field read_queue table<string, string>
+---@field is_processing_queue boolean
 ---@field selected_day_folders table
 ---@field logs_permission boolean
 local PersistencyAPI = {}
@@ -28,14 +30,34 @@ end
 function PersistencyAPI:__set_dashboards_files_metadata()
     local metatable = {
         __newindex = function(table, key, value)
-            self:read_file_content_async(key, function(content)
-                self.dashboard_files_content[key] = content
-            end)
-            rawset(table, key, value)
+            rawset(self.dashboard_files, key, value)
+            self:enqueue_file_read(key)
         end
     }
 
-    setmetatable(self.dashboard_files_content, metatable)
+    setmetatable(self.dashboard_files, metatable)
+end
+
+function PersistencyAPI:enqueue_file_read(filepath)
+    table.insert(self.read_queue, filepath)
+    if not self.is_processing_queue then
+        self:process_read_queue()
+    end
+end
+
+function PersistencyAPI:process_read_queue()
+    if #self.read_queue == 0 then
+        self.is_processing_queue = false
+        return
+    end
+
+    self.is_processing_queue = true
+    local filepath = table.remove(self.read_queue, 1)
+
+    self:read_file_content_async(filepath, function(content)
+        self.dashboard_files_content[filepath] = content
+        self:process_read_queue()
+    end)
 end
 
 ---@param filepath string
@@ -101,6 +123,8 @@ function PersistencyAPI:initialize(opts)
     self.dashboard_files = {}
     self.dashboard_files_content = {}
     self.selected_day_folders = {}
+    self.read_queue = {}
+    self.is_processing_queue = false
     self:__set_dashboards_files_metadata()
     self:setup_persistence_structure()
 end
