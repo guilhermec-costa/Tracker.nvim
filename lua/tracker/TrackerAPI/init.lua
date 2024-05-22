@@ -1,6 +1,7 @@
 local utils = require "tracker.utils"
 local events_configs = require "tracker.default_events_config"
 local notifier = require "tracker.TrackerAPI.Notifier"
+local types = require "tracker.types"
 
 ---@class TrackerAPI
 ---@field session_id string
@@ -25,6 +26,7 @@ local notifier = require "tracker.TrackerAPI.Notifier"
 local TrackerAPI = {}
 TrackerAPI.__index = TrackerAPI
 
+---@param opts userconfig
 ---@return TrackerAPI|nil
 function TrackerAPI.new_session(opts)
     local self = setmetatable({}, TrackerAPI)
@@ -37,9 +39,10 @@ function TrackerAPI:initialize(opts)
     self.Notifier = notifier.new({
         title = "Tracker",
     })
+
     if not utils.check_table_type(opts) then
         self.Notifier:notify_error("Failed to initialize Tracker.nvim")
-        self = {}
+        self = {} ---@diagnostic disable-line: missing-fields
         return
     end
 
@@ -65,6 +68,7 @@ function TrackerAPI:initialize(opts)
     self:start_timer(self.event_debounce_time)
 end
 
+---@return tracker_defaults
 function TrackerAPI:__generate_tracker_default_values()
     local tracker_start_timestamp = os.time()
     local add_to_creation_time = 7 * 24 * 60 * 60
