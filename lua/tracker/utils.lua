@@ -47,4 +47,12 @@ utils.get_win_id_from_buffer = function(bufnr)
     return nil
 end
 
+utils.check_table_type = function(data)
+    if type(data) ~= "table" then
+        return false
+    end
+
+    return true
+end
+
 return utils

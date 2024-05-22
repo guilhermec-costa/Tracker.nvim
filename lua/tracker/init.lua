@@ -12,9 +12,8 @@ local Tracker = {}
 function Tracker.setup(opts)
     opts = opts or {}
 
-    ---@type TrackerAPI
+    ---@type TrackerAPI|nil
     Tracker.Session = TrackerAPI.new_session(opts)
-
 
     ---@type AggregatorAPI
     Tracker.Aggregator = AggregatorAPI.new_aggregator(Tracker)
@@ -29,6 +28,7 @@ function Tracker.setup(opts)
 
     local Event_Manager = EventsAPI.new(Tracker)
     Event_Manager:activate_events(Tracker.Session.events)
+    Tracker.Session.persistor:create_log("Tracker events have been activated on " .. os.date(log_date_format))
 end
 
 return Tracker

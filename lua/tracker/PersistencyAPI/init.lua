@@ -54,8 +54,9 @@ function PersistencyAPI:process_read_queue()
     self.is_processing_queue = true
     local filepath = table.remove(self.read_queue, 1)
 
-    self:read_file_content_async(filepath, function(content)
-        self.dashboard_files_content[filepath] = content
+    self:read_file_content_async(filepath, function(stringified_content)
+        local content_table = json.decode(stringified_content)
+        self.dashboard_files_content[filepath] = content_table
         self:process_read_queue()
     end)
 end
